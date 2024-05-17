@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from python_bring_api.bring import Bring
 from python_bring_api.types import BringNotificationType
 
-from source.ingredient import Ingredient
-from source.logger_mixin import LoggerMixin
+from ingredient import Ingredient
+from logger_mixin import LoggerMixin
 
 
 class BringHandler(LoggerMixin):

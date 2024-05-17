@@ -1,4 +1,4 @@
-from source.errors import IgnoredIngredient
+from errors import IgnoredIngredient
 
 
 class Ingredient:

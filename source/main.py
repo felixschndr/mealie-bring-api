@@ -4,10 +4,10 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request
 
-from source.bring_handler import BringHandler
-from source.errors import IgnoredIngredient
-from source.ingredient import Ingredient
-from source.logger_mixin import LoggerMixin
+from bring_handler import BringHandler
+from errors import IgnoredIngredient
+from ingredient import Ingredient
+from logger_mixin import LoggerMixin
 
 load_dotenv()
 
