@@ -46,5 +46,5 @@ if __name__ == "__main__":
 
     app.run(
         host=os.getenv("HTTP_HOST", "0.0.0.0"),
-        port=int(os.getenv("HTTP_PORT", 8080)),
+        port=int(os.getenv("HTTP_PORT", 8742)),
     )

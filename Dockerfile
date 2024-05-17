@@ -2,6 +2,8 @@ FROM python:3.10-alpine
 
 WORKDIR /app
 
+EXPOSE 8742/tcp
+
 COPY source/*.py .
 COPY requirements.txt .
 

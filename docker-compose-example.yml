@@ -1,0 +1,24 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie
+    container_name: mealie_app
+    ports:
+      - 12000:9000
+    [...]
+    depends_on:
+      - database
+      - bring-api
+  database:
+    container_name: mealie_database
+    image: postgres:15
+    [...]
+  bring-api:
+    image: ghrc.io/felixschndr/mealie-bring-api
+    container_name: mealie_bring_api
+    ports:
+      - 12001:8742
+    environment:
+      BRING_USERNAME: myuser@myemailprovider.com
+      BRING_PASSWORD: mysupersecretpassword
+      BRING_LIST_NAME: My list has some spaces in it
+      IGNORED_INGREDIENTS: Pepper,Salt
