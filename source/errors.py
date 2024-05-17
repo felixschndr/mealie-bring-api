@@ -1,0 +1,2 @@
+class IgnoredIngredient(Exception):
+    pass
