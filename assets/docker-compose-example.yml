@@ -13,7 +13,7 @@ services:
     image: postgres:15
     [...]
   bring-api:
-    image: ghrc.io/felixschndr/mealie-bring-api
+    image: ghcr.io/felixschndr/mealie-bring-api:latest
     container_name: mealie_bring_api
     ports:
       - 12001:8742
