@@ -44,7 +44,10 @@ if __name__ == "__main__":
     logger = LoggerMixin()
     bring_handler = BringHandler()
 
+    host = os.getenv("HTTP_HOST", "0.0.0.0")
+    port = int(os.getenv("HTTP_PORT", 8742))
+    logger.log.info(f"Listening on {host}:{port}")
     app.run(
-        host=os.getenv("HTTP_HOST", "0.0.0.0"),
-        port=int(os.getenv("HTTP_PORT", 8742)),
+        host=host,
+        port=port,
     )
