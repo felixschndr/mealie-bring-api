@@ -65,7 +65,7 @@ you can ignore some environment variables (e.g. `HTTP_HOST` and `HTTP_PORT`).
 	       -e BRING_PASSWORD="<your password>"
 	       -e BRING_LIST_NAME="<your list name>"
 	       -p 1234:8742
-	       ghrc.io/felixschndr/mealie-bring-api:latest
+	       ghcr.io/felixschndr/mealie-bring-api:latest
 	   ```
 
 #### 3. As a container with `docker-compose` (Preferred way)

@@ -48,6 +48,7 @@ def status_handler():
 
 if __name__ == "__main__":
     logger = LoggerMixin()
+    logger.log = logging.getLogger("Main")
     bring_handler = BringHandler()
 
     host = os.getenv("HTTP_HOST", "0.0.0.0")
