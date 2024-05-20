@@ -20,13 +20,18 @@ def webhook_handler():
     data = request.get_json(force=True)
 
     recipe_name = data["name"]
-    logger.log.info(f"Received recipe {recipe_name} from {request.origin}")
+    logger.log.info(f'Received recipe "{recipe_name}" from "{request.origin}"')
+
+    if data["settings"]["disableAmount"]:
+        logger.log.warning(
+            "This recipe has its ingredient amount this disabled. Its ingredients will not be checked whether they are supposed to be ignored."
+        )
 
     for ingredient in data["recipeIngredient"]:
         try:
             ingredient = Ingredient(ingredient, bring_handler.ignored_ingredients)
         except ValueError as e:
-            logging.error(e)
+            logging.warning(e)
             continue
         except IgnoredIngredient as e:
             logging.debug(e)

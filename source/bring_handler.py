@@ -66,17 +66,21 @@ class BringHandler(LoggerMixin):
 
         return bring_list_uuid
 
-    def parse_ignored_ingredients(self) -> list[str]:
-        ignored_ingredients = []
+    def parse_ignored_ingredients(self) -> dict[str, str | list[str]]:
+        ignored_ingredients = {"as list": [], "as string": ""}
 
         if not self.ignored_ingredients_input:
             return ignored_ingredients
 
-        for ingredient in self.ignored_ingredients_input.replace(", ", ",").split(","):
-            ignored_ingredients.append(ingredient.lower())
+        ignored_ingredients_input = self.ignored_ingredients_input.lower()
+
+        for ingredient in ignored_ingredients_input.replace(", ", ",").split(","):
+            ignored_ingredients["as list"].append(ingredient)
+
+        ignored_ingredients["as string"] = ignored_ingredients_input
 
         if ignored_ingredients:
-            self.log.info(f"Ignoring ingredients {ignored_ingredients}")
+            self.log.info(f"Ignoring ingredients {ignored_ingredients['as list']}")
 
         return ignored_ingredients
 
@@ -84,7 +88,9 @@ class BringHandler(LoggerMixin):
         self.log.debug(f"Adding ingredient to Bring: {ingredient}")
 
         if ingredient.specification:
-            self.bring.saveItem(self.list_uuid, ingredient.food, ingredient.specification)
+            self.bring.saveItem(
+                self.list_uuid, ingredient.food, ingredient.specification
+            )
         else:
             self.bring.saveItem(self.list_uuid, ingredient.food)
 

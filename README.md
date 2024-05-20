@@ -32,15 +32,15 @@ Mealie instance and adds the ingredients of a recipe to a specified Bring shoppi
 
 No matter which deployment option you chose you must setup some environment variables:
 
-| Variable name         | Description                                                                                                                             | Required | Default                           | Example                      |
-|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|:--------:|-----------------------------------|------------------------------|
-| `BRING_USERNAME`      | The email address of your bring account                                                                                                 |   Yes    | -                                 | myuser@myemailprovider.com   |
-| `BRING_PASSWORD`      | The password of your bring account                                                                                                      |   Yes    | -                                 | my super secret password     |
-| `BRING_LIST_NAME`     | The exact name of the list you want to add the ingredients to, supports special characters                                              |   Yes    | -                                 | My shopping list with spaces |
-| `IGNORED_INGREDIENTS` | Ingredients that are never added to the shopping list (things you always have at home), separated by a `,`, case insensitive            |    No    | - (all ingredients will be added) | Salt,Pepper,Frying oil       |
-| `LOG_LEVEL`           | The loglevel the application logs at                                                                                                    |    No    | `INFO`                            | `DEBUG`                      |
-| `HTTP_HOST`           | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker  |    No    | `0.0.0.0`                         | `192.168.1.5`                |
-| `HTTP_PORT`           | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker |    No    | `8742`                            | `1234`                       |
+| Variable name         | Description                                                                                                                                                                                                                                                                                | Required | Default                           | Example                        |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------:|-----------------------------------|--------------------------------|
+| `BRING_USERNAME`      | The email address of your bring account                                                                                                                                                                                                                                                    |   Yes    | -                                 | `myuser@myemailprovider.com`   |
+| `BRING_PASSWORD`      | The password of your bring account                                                                                                                                                                                                                                                         |   Yes    | -                                 | `my super secret password`     |
+| `BRING_LIST_NAME`     | The exact name of the list you want to add the ingredients to, supports special characters                                                                                                                                                                                                 |   Yes    | -                                 | `My shopping list with spaces` |
+| `IGNORED_INGREDIENTS` | Ingredients that are never added to the shopping list (things you always have at home), separated by a `,`, case insensitive, **WARNING**: This *only* works for recipes with *enabled* ingredient amounts in the recipe settings! ![recipe settings](./assets/images/recipe_settings.png) |    No    | - (all ingredients will be added) | `Salt,Pepper,Frying oil`       |
+| `LOG_LEVEL`           | The loglevel the application logs at                                                                                                                                                                                                                                                       |    No    | `INFO`                            | `DEBUG`                        |
+| `HTTP_HOST`           | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker                                                                                                                                                     |    No    | `0.0.0.0`                         | `192.168.1.5`                  |
+| `HTTP_PORT`           | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker                                                                                                                                                    |    No    | `8742`                            | `1234`                         |
 
 ### Deployment options
 
@@ -61,9 +61,9 @@ you can ignore some environment variables (e.g. `HTTP_HOST` and `HTTP_PORT`).
 	- Example:
 	   ```bash
 	   docker run 
-	       -e BRING_USERNAME="<your email>"
-	       -e BRING_PASSWORD="<your password>"
-	       -e BRING_LIST_NAME="<your list name>"
+	       -e BRING_USERNAME="myuser@myemailprovider.com"
+	       -e BRING_PASSWORD="my super secret password"
+	       -e BRING_LIST_NAME="My shopping list with spaces"
 	       -p 1234:8742
 	       ghcr.io/felixschndr/mealie-bring-api:latest
 	   ```
@@ -108,7 +108,7 @@ Mealie and this project.
    - You should now see the ingredients in your list
    - You should see some output in the logfile
    ```text
-   mealie_bring_api | [2024-05-18 13:38:41,090] [LoggerMixin] [INFO] [Received recipe Apfelstrudel from https://mealie-bring-api.yourlocaldomain.com]
+   mealie_bring_api | [2024-05-18 13:38:41,090] [LoggerMixin] [INFO] [Received recipe "Apple crumble" from "https://mealie-bring-api.yourlocaldomain.com"]
    mealie_bring_api | [2024-05-18 13:38:45,373] [LoggerMixin] [INFO] [Added all ingredients to Bring]
    ```
 
