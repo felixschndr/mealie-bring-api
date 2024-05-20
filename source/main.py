@@ -40,6 +40,12 @@ def webhook_handler():
     return "OK"
 
 
+@app.route("/status", methods=["GET"])
+def status_handler():
+    logger.log.debug("Got a status request")
+    return "OK"
+
+
 if __name__ == "__main__":
     logger = LoggerMixin()
     bring_handler = BringHandler()
