@@ -3,7 +3,7 @@ from errors import IgnoredIngredient
 
 class Ingredient:
     def __init__(
-        self, ingredient_input: dict, ignored_ingredients: dict[str, str | list[str]]
+        self, ingredient_input: dict, ignored_ingredients: list[str]
     ):
         self.ingredient_input = ingredient_input
         self.ignored_ingredients = ignored_ingredients
@@ -22,6 +22,7 @@ class Ingredient:
         try:
             _ = self.ingredient_input["food"]
         except KeyError:
+            # Happens if there is an empty ingredient (i.e. added one ingredient but did not fill it out)
             raise ValueError("There is an ingredient with no name, it will be ignored!")
         if self.ingredient_input["disableAmount"]:
             self._parse_input_with_no_ingredient_amounts()
@@ -34,7 +35,7 @@ class Ingredient:
     def _parse_input_with_ingredient_amounts(self) -> None:
 
         food_name = self.ingredient_input["food"]["name"]
-        if food_name.lower() in self.ignored_ingredients["as list"]:
+        if food_name.lower() in self.ignored_ingredients:
             raise IgnoredIngredient(f"Found ignored ingredient {food_name}")
         self.food = food_name
 
