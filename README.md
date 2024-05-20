@@ -5,8 +5,8 @@ a Bring shopping list with this [PR](https://github.com/mealie-recipes/mealie/pu
 Mealie instance to be publicly available (from the internet). Since many users want their self-hosted services to
 *not* be available from the internet, I chose to create this integration.
 
-This project provides the source code and a container image for a simple webserver. This webserver can run next to
-the users Mealie instance (for example with `docker-compose`) and listen for requests.
+This project provides the source code and a container image for a simple webserver which listens for requests by the 
+Mealie instance and adds the ingredients of a recipe to a specified Bring shopping list.
 
 ## Architecture
 
@@ -37,7 +37,7 @@ No matter which deployment option you chose you must setup some environment vari
 | `BRING_USERNAME`      | The email address of your bring account                                                                                                 |   Yes    | -                                 | myuser@myemailprovider.com   |
 | `BRING_PASSWORD`      | The password of your bring account                                                                                                      |   Yes    | -                                 | my super secret password     |
 | `BRING_LIST_NAME`     | The exact name of the list you want to add the ingredients to, supports special characters                                              |   Yes    | -                                 | My shopping list with spaces |
-| `IGNORED_INGREDIENTS` | Ingredients that are never added to the shopping list (things you always have at home), separated by a `,`, case insensitive            |    No    | - (all ingredients will be added) | Salt,Pepper,frying oil       |
+| `IGNORED_INGREDIENTS` | Ingredients that are never added to the shopping list (things you always have at home), separated by a `,`, case insensitive            |    No    | - (all ingredients will be added) | Salt,Pepper,Frying oil       |
 | `LOG_LEVEL`           | The loglevel the application logs at                                                                                                    |    No    | `INFO`                            | `DEBUG`                      |
 | `HTTP_HOST`           | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker  |    No    | `0.0.0.0`                         | `192.168.1.5`                |
 | `HTTP_PORT`           | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker |    No    | `8742`                            | `1234`                       |
@@ -82,14 +82,17 @@ Mealie and this project.
 
 1. Head over to `http(s)://<your-mealie-instance>/group/data/recipe-actions` (e.g., 
 `http://localhost:1234/group/data/recipe-actions`) while being logged in as an administrator.
+
    ![actions before adding](./assets/images/actions_before_adding.png)
 2. Click on `Create` to create a new `action`.
 3. Give it any title (e.g. `Bring` or `Add ingredients to Bring`). This will be visible for the users.
+
    ![adding action](./assets/images/adding_action.png)
 4. For the `URL` input the address where this project is running on followed by a `/` (e.g. `http://localhost:8742/` 
    or `https://mealie-bring-api.yourlocaldomain.com/` if you are using a reverse proxy)
 5. Change the `Type` to `POST`
 6. Save
+
    ![actions after adding](./assets/images/actions_after_adding.png)
 7. Try it out 🎉
 
@@ -99,6 +102,7 @@ Mealie and this project.
 2. Click on the three little dots.
 3. Click on `Recipe Actions`
 4. Chose your new action (e.g. `Bring`)
+
    ![executing](./assets/images/executing.png)
 5. That's it!
    - You should now see the ingredients in your list
@@ -107,3 +111,22 @@ Mealie and this project.
    mealie_bring_api | [2024-05-18 13:38:41,090] [LoggerMixin] [INFO] [Received recipe Apfelstrudel from https://mealie-bring-api.yourlocaldomain.com]
    mealie_bring_api | [2024-05-18 13:38:45,373] [LoggerMixin] [INFO] [Added all ingredients to Bring]
    ```
+
+## Maintenance
+
+You can check whether the webserver is still alive by sending a `GET` request to `/status` and check if you get a `200` 
+status code:
+```bash
+$ curl -I https://mealie-bring-api.yourlocaldomain.com/status
+HTTP/2 200
+server: openresty
+date: Mon, 20 May 2024 12:27:56 GMT
+content-type: text/html; charset=utf-8
+content-length: 2
+strict-transport-security: max-age=63072000; preload
+```
+or
+```bash
+$ curl -s -o /dev/null -w "%{http_code}" https://mealie-bring-api.yourlocaldomain.com/status
+200
+```
