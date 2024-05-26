@@ -46,14 +46,17 @@ class Ingredient (LoggerMixin):
 
         quantity = self.ingredient_input.get("quantity", None)
         if quantity:
-            self.specification += str(quantity)
+            self.specification += f"{str(quantity)} "
 
         unit = self.ingredient_input.get("unit", None)
         self.log.debug(f"Unit: {unit}")
         if unit:
-            unit_formatted = unit.get("abbreviation", unit["name"])
-            self.log.debug(f"In if: {unit_formatted}")
-            self.specification += unit_formatted
+            abbreviation = unit["abbreviation"]
+            name = unit["name"]
+            if abbreviation:
+                self.specification += abbreviation
+            elif name:
+                self.specification += name
 
         self.log.debug(f"Specification afterwards: {self.specification}")
 
