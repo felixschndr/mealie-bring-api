@@ -1,10 +1,6 @@
 name: Deploy Images to GitHub Container Registry
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+on: push
 
 jobs:
   push-store-image:
@@ -21,6 +17,12 @@ jobs:
           password: ${{secrets.CONTAINER_REGISTRY_TOKEN}}
 
       - name: "Build Image and Push to Container Registry"
+        run: |
+          docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}
+          docker push ghcr.io/${{github.repository}}:${{github.ref_name}}
+
+      - name: "Build Image as latest and Push to Container Registry"
+        if: github.ref == 'refs/heads/main'
         run: |
           docker build . --tag ghcr.io/${{github.repository}}:latest
           docker push ghcr.io/${{github.repository}}:latest
