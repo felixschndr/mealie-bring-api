@@ -1,3 +1,5 @@
+from typing import Optional
+
 from errors import IgnoredIngredient
 from logger_mixin import LoggerMixin
 
@@ -59,32 +61,41 @@ class Ingredient(LoggerMixin):
         if food_name.lower() in self.ignored_ingredients:
             raise IgnoredIngredient(f"Found ignored ingredient {food_name}")
 
-        # Food #
+        self._set_food(food_name, food_plural_name, quantity)
+        self._set_quantity(quantity)
+        self._set_seperator(quantity, unit)
+        self._set_unit(quantity, unit)
+        self._set_note(note)
+
+    def _set_food(self, food_name: str, food_plural_name: str, quantity: int) -> None:
         if quantity and quantity > 1 and food_plural_name:
             self.food = food_plural_name
-        else:
-            self.food = food_name
+            return
 
-        # Quantity #
+        self.food = food_name
+
+    def _set_quantity(self, quantity: int) -> None:
         if quantity:
             self.specification += str(quantity)
 
-        # Seperator between Quantity and Unit #
+    def _set_seperator(self, quantity: int, unit: Optional[dict]):
         if quantity and unit:
             self.specification += " "
 
-        # Unit #
-        if unit:
-            unit_name = unit["name"]
-            unit_abbreviation = unit["abbreviation"]
-            unit_plural_name = unit["pluralName"]
-            if unit_abbreviation:
-                self.specification += unit_abbreviation
-            elif unit_plural_name and quantity and quantity > 1:
-                self.specification += unit_plural_name
-            elif unit_name:
-                self.specification += unit_name
+    def _set_unit(self, quantity: int, unit: Optional[dict]):
+        if not unit:
+            return
 
-        # Note #
+        unit_name = unit["name"]
+        unit_abbreviation = unit["abbreviation"]
+        unit_plural_name = unit["pluralName"]
+        if unit_abbreviation:
+            self.specification += unit_abbreviation
+        elif unit_plural_name and quantity and quantity > 1:
+            self.specification += unit_plural_name
+        elif unit_name:
+            self.specification += unit_name
+
+    def _set_note(self, note: str):
         if note:
             self.specification += f" ({note})"
