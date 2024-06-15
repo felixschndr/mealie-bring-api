@@ -3,6 +3,7 @@ from typing import Optional
 from errors import IgnoredIngredient
 from logger_mixin import LoggerMixin
 
+NO_INGREDIENT_NAME_ERROR = "There is an ingredient with no name, it will be ignored!"
 
 class Ingredient(LoggerMixin):
     def __init__(
@@ -30,26 +31,24 @@ class Ingredient(LoggerMixin):
 
     def parse_input(self) -> None:
         self.log.debug(f"Parsing {self.ingredient_input}")
-        try:
-            if self.enable_amount:
-                self._parse_input_with_ingredient_amounts()
-            else:
-                self._parse_input_with_no_ingredient_amounts()
-        except ValueError:
-            # Happens if there is an empty ingredient (i.e. added one ingredient but did not fill it out)
-            raise ValueError("There is an ingredient with no name, it will be ignored!")
+
+        if self.enable_amount:
+            self._parse_input_with_ingredient_amounts()
+        else:
+            self._parse_input_with_no_ingredient_amounts()
 
         self.log.debug(f"Parsed ingredient: {self}")
 
     def _parse_input_with_no_ingredient_amounts(self) -> None:
         note = self.ingredient_input["note"]
         if not note:
-            raise ValueError()
+            raise ValueError(NO_INGREDIENT_NAME_ERROR)
         self.food = note
 
     def _parse_input_with_ingredient_amounts(self) -> None:
         if not self.ingredient_input["food"]:
-            raise ValueError()
+            # Happens if there is an empty ingredient (i.e., added one ingredient but did not fill it out)
+            raise ValueError(NO_INGREDIENT_NAME_ERROR)
 
         food_name = self.ingredient_input["food"]["name"]
         food_plural_name = self.ingredient_input["food"]["pluralName"]
