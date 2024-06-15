@@ -42,6 +42,8 @@ No matter which deployment option you chose you must setup some environment vari
 | `HTTP_HOST`           | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker                                                                                                                                                     |    No    | `0.0.0.0`                         | `192.168.1.5`                  |
 | `HTTP_PORT`           | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker                                                                                                                                                    |    No    | `8742`                            | `1234`                         |
 
+Ensure to quote your environment variables. Without quotes your password might not be read properly if it contains symbols such as `<`, `&` or `;`.
+
 ### Deployment options
 
 You can run this app in three simple ways. I prefer the third option. Depending on the deployment option you chose
@@ -60,11 +62,11 @@ you can ignore some environment variables (e.g. `HTTP_HOST` and `HTTP_PORT`).
 	- You *can* (not must) specify a different port than the default (`8742`) with `-p 1234:8742`.
 	- Example:
 	   ```bash
-	   docker run 
-	       -e BRING_USERNAME="myuser@myemailprovider.com"
-	       -e BRING_PASSWORD="my super secret password"
-	       -e BRING_LIST_NAME="My shopping list with spaces"
-	       -p 1234:8742
+	   docker run \
+	       -e BRING_USERNAME="myuser@myemailprovider.com" \
+	       -e BRING_PASSWORD="my super secret password" \
+	       -e BRING_LIST_NAME="My shopping list with spaces" \
+	       -p 1234:8742 \
 	       ghcr.io/felixschndr/mealie-bring-api:latest
 	   ```
 

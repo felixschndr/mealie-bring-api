@@ -19,25 +19,29 @@ app = Flask(__name__)
 def webhook_handler():
     data = request.get_json(force=True)
 
-    recipe_name = data["name"]
-    logger.log.info(f'Received recipe "{recipe_name}" from "{request.origin}"')
+    logger.log.info(f'Received recipe "{data["name"]}" from "{request.origin}"')
 
-    if data["settings"]["disableAmount"]:
+    enable_amount = not data["settings"]["disableAmount"]
+    if enable_amount:
+        logger.log.debug("This recipe has its ingredient amount enabled")
+    else:
         logger.log.warning(
-            "This recipe has its ingredient amount this disabled. Its ingredients will not be checked whether they are supposed to be ignored."
+            "This recipe has its ingredient amount this disabled --> Its ingredients will not be checked whether they are supposed to be ignored"
         )
 
     for ingredient in data["recipeIngredient"]:
         try:
-            ingredient = Ingredient(ingredient, bring_handler.ignored_ingredients)
+            parsed_ingredient = Ingredient(
+                ingredient, bring_handler.ignored_ingredients, enable_amount
+            )
         except ValueError as e:
-            logging.warning(e)
+            logger.log.warning(e)
             continue
         except IgnoredIngredient as e:
-            logging.debug(e)
+            logger.log.debug(e)
             continue
 
-        bring_handler.add_item_to_list(ingredient)
+        bring_handler.add_item_to_list(parsed_ingredient)
 
     logger.log.info("Added all ingredients to Bring")
     bring_handler.notify_users_about_changes_in_list()

@@ -55,13 +55,11 @@ class BringHandler(LoggerMixin):
                 break
 
         if not bring_list_uuid:
-            self.log.critical(
-                f"Could not find a bring list with the name {self.list_name}"
-            )
+            self.log.critical(f'Can not find a list with the name "{self.list_name}"')
             sys.exit(1)
 
         self.log.info(
-            f"Found the bring list {self.list_name} (UUID: {bring_list_uuid})"
+            f'Found the list with the name "{self.list_name}" (UUID: {bring_list_uuid})'
         )
 
         return bring_list_uuid
