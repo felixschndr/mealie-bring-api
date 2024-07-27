@@ -19,7 +19,7 @@ app = Flask(__name__)
 def webhook_handler():
     data = request.get_json(force=True)
 
-    logger.log.info(f'Received recipe "{data["name"]}" from "{request.origin}"')
+    logger.log.info(f'Received recipe "{data["name"]}" from "{request.remote_addr}"')
 
     enable_amount = not data["settings"]["disableAmount"]
     if enable_amount:
