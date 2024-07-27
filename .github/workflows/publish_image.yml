@@ -21,8 +21,14 @@ jobs:
           docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}
           docker push ghcr.io/${{github.repository}}:${{github.ref_name}}
 
-      - name: "Build Image as latest and Push to Container Registry"
+      - name: "Build Image and Push to Container Registry for linux/arm"
+        run: |
+          docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}-linux-arm --platform linux/arm
+          docker push ghcr.io/${{github.repository}}:${{github.ref_name}}-linux-arm
+
+      - name: "Tag image on main as latest"
         if: github.ref == 'refs/heads/main'
         run: |
-          docker build . --tag ghcr.io/${{github.repository}}:latest
+          docker pull ghcr.io/${{github.repository}}:${{github.ref_name}}
+          docker tag  ghcr.io/${{github.repository}}:${{github.ref_name}} ghcr.io/${{github.repository}}:latest
           docker push ghcr.io/${{github.repository}}:latest
