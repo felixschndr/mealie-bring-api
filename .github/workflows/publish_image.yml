@@ -21,6 +21,11 @@ jobs:
           docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}
           docker push ghcr.io/${{github.repository}}:${{github.ref_name}}
 
+      - name: "Build Image and Push to Container Registry for linux/aarch64"
+        run: |
+          docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}-linux-aarch64 --platform linux/aarch64
+          docker push ghcr.io/${{github.repository}}:${{github.ref_name}}-linux-aarch64
+
       - name: "Build Image and Push to Container Registry for linux/arm"
         run: |
           docker build . --tag ghcr.io/${{github.repository}}:${{github.ref_name}}-linux-arm --platform linux/arm
