@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM --platform=$BUILDPLATFORM python:3.10-alpine
 
 LABEL org.opencontainers.image.source="https://github.com/felixschndr/mealie-bring-api"
 LABEL org.opencontainers.image.description="The container image of the mealie bring api integration (https://github.com/felixschndr/mealie-bring-api)"
