@@ -10,12 +10,11 @@ from logger_mixin import LoggerMixin
 
 load_dotenv()
 
-
 app = Flask(__name__)
 
 
 @app.route("/", methods=["POST"])
-def webhook_handler():
+def webhook_handler() -> str:
     data = request.get_json(force=True)
 
     mealie_version_after_2 = True
@@ -23,13 +22,9 @@ def webhook_handler():
         mealie_version_after_2 = False
 
     if mealie_version_after_2:
-        logger.log.info(
-            f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"'
-        )
+        logger.log.info(f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"')
     else:
-        logger.log.info(
-            f'Received recipe "{data["name"]}" from "{request.remote_addr}"'
-        )
+        logger.log.info(f'Received recipe "{data["name"]}" from "{request.remote_addr}"')
 
     if mealie_version_after_2:
         enable_amount = not data["content"]["settings"]["disable_amount"]
@@ -70,7 +65,7 @@ def webhook_handler():
 
 
 @app.route("/status", methods=["GET"])
-def status_handler():
+def status_handler() -> str:
     logger.log.debug("Got a status request")
     return "OK"
 

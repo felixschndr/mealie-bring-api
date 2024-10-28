@@ -2,11 +2,10 @@ import os
 import sys
 
 from dotenv import load_dotenv
-from python_bring_api.bring import Bring
-from python_bring_api.types import BringNotificationType
-
 from ingredient import Ingredient
 from logger_mixin import LoggerMixin
+from python_bring_api.bring import Bring
+from python_bring_api.types import BringNotificationType
 
 
 class BringHandler(LoggerMixin):
@@ -58,9 +57,7 @@ class BringHandler(LoggerMixin):
             self.log.critical(f'Can not find a list with the name "{self.list_name}"')
             sys.exit(1)
 
-        self.log.info(
-            f'Found the list with the name "{self.list_name}" (UUID: {bring_list_uuid})'
-        )
+        self.log.info(f'Found the list with the name "{self.list_name}" (UUID: {bring_list_uuid})')
 
         return bring_list_uuid
 
@@ -84,9 +81,7 @@ class BringHandler(LoggerMixin):
         self.log.debug(f"Adding ingredient to Bring: {ingredient}")
 
         if ingredient.specification:
-            self.bring.saveItem(
-                self.list_uuid, ingredient.food, ingredient.specification
-            )
+            self.bring.saveItem(self.list_uuid, ingredient.food, ingredient.specification)
         else:
             self.bring.saveItem(self.list_uuid, ingredient.food)
 

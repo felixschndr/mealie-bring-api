@@ -47,7 +47,7 @@ class Ingredient(LoggerMixin):
             raise ValueError(NO_INGREDIENT_NAME_ERROR)
         self.food = note
 
-    def _parse_input_with_ingredient_amounts(self, mealie_version_after_2) -> None:
+    def _parse_input_with_ingredient_amounts(self, mealie_version_after_2: bool) -> None:
         if not self.ingredient_input["food"]:
             # Happens if there is an empty ingredient (i.e., added one ingredient but did not fill it out)
             raise ValueError(NO_INGREDIENT_NAME_ERROR)
@@ -82,13 +82,11 @@ class Ingredient(LoggerMixin):
         if quantity:
             self.specification += str(quantity)
 
-    def _set_seperator(self, quantity: int, unit: Optional[dict]):
+    def _set_seperator(self, quantity: int, unit: Optional[dict]) -> None:
         if quantity and unit:
             self.specification += " "
 
-    def _set_unit(
-        self, quantity: int, unit: Optional[dict], mealie_version_after_2: bool
-    ):
+    def _set_unit(self, quantity: int, unit: Optional[dict], mealie_version_after_2: bool) -> None:
         if not unit:
             return
 
@@ -105,6 +103,6 @@ class Ingredient(LoggerMixin):
         elif unit_name:
             self.specification += unit_name
 
-    def _set_note(self, note: str):
+    def _set_note(self, note: str) -> None:
         if note:
             self.specification += f" ({note})"
