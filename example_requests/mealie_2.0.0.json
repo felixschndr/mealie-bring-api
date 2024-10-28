@@ -1,0 +1,516 @@
+{
+    "action": {
+        "action_type": "post",
+        "title": "Bring Dev (Don't use)",
+        "url": "https://mealiebringapidev.home.fschneider.me/",
+        "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+        "household_id": "7d54749a-6326-4051-b369-445353bb6678",
+        "id": "5b18b178-0012-4852-8e24-8db146408100"
+    },
+    "content": {
+        "id": "e0ed9094-e54e-4066-9ef7-1aae6802a938",
+        "user_id": "7ceccf57-1fec-4f5d-afbd-f83b842fbcc1",
+        "household_id": "7d54749a-6326-4051-b369-445353bb6678",
+        "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+        "name": "Zitronenrisotto mit Lachs",
+        "slug": "zitronenrisotto-mit-lachs",
+        "image": "227",
+        "recipe_yield": "1",
+        "total_time": "40 Minuten",
+        "prep_time": "15 Minuten",
+        "cook_time": null,
+        "perform_time": "25 Minuten",
+        "description": "",
+        "recipe_category": [],
+        "tags": [
+            {
+                "id": "6d29cb54-d8c4-431d-a8f1-d01fe910bf9f",
+                "name": "Hauptspeise",
+                "slug": "hauptspeise"
+            },
+            {
+                "id": "bcb2e154-25c5-4253-aafb-abfab8f127a1",
+                "name": "Einfach",
+                "slug": "einfach"
+            },
+            {
+                "id": "474cc8ee-b074-413f-ac30-39b92b4186c5",
+                "name": "Gekocht",
+                "slug": "gekocht"
+            },
+            {
+                "id": "5f710ec3-d5ba-48e1-b93f-5d21590dd0f9",
+                "name": "Lachs",
+                "slug": "lachs"
+            },
+            {
+                "id": "9c65db17-e1ca-4513-84fc-b838cec6e6d0",
+                "name": "Fisch",
+                "slug": "fisch"
+            },
+            {
+                "id": "746769d1-ae21-46e8-b853-0954dc5a1aa7",
+                "name": "Warm",
+                "slug": "warm"
+            }
+        ],
+        "tools": [],
+        "rating": null,
+        "org_url": "https://www.chefkoch.de/rezepte/1171461223223492/Zitronenrisotto.html",
+        "date_added": "2024-07-04",
+        "date_updated": "2024-10-26T17:37:17.590438+00:00",
+        "created_at": "2024-07-04T22:18:47.117726+00:00",
+        "updated_at": "2024-10-26T17:37:17.603463+00:00",
+        "last_made": "2024-10-25T21:59:59+00:00",
+        "recipe_ingredient": [
+            {
+                "quantity": 1.0,
+                "unit": null,
+                "food": {
+                    "id": "7186b98e-01a5-4746-bb30-88a2b7bbd147",
+                    "name": "Lachs",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-13T18:03:42.536708+00:00",
+                    "updated_at": "2024-05-13T18:03:42.536717+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "1 Lachs",
+                "title": "",
+                "original_text": null,
+                "reference_id": "d864e6ef-c404-4543-b394-587ff0603d9c"
+            },
+            {
+                "quantity": 1.0,
+                "unit": null,
+                "food": {
+                    "id": "e601ca8c-720c-41c1-bc5c-d55bf5d97225",
+                    "name": "Zwiebel",
+                    "plural_name": "Zwiebeln",
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-13T18:03:41.899157+00:00",
+                    "updated_at": "2024-05-28T14:01:54.564464+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "1 Zwiebel",
+                "title": null,
+                "original_text": null,
+                "reference_id": "1d7ff9c6-aa5b-4005-b040-3a6b5ab5ca99"
+            },
+            {
+                "quantity": 3.0,
+                "unit": {
+                    "id": "df4c8c14-7d7f-4586-87c8-ed6686484a21",
+                    "name": "Zehe",
+                    "plural_name": "Zehen",
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": false,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.903469+00:00",
+                    "updated_at": "2024-05-16T18:54:39.612088+00:00"
+                },
+                "food": {
+                    "id": "45e77144-f16f-4b0f-a7eb-3a30a44d8f51",
+                    "name": "Knoblauch",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-13T18:03:41.854512+00:00",
+                    "updated_at": "2024-05-13T18:03:41.854520+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "3 Zehen Knoblauch",
+                "title": null,
+                "original_text": null,
+                "reference_id": "d631877c-cec2-4c17-ac86-36137ac000cc"
+            },
+            {
+                "quantity": 250.0,
+                "unit": {
+                    "id": "29c898c7-f043-4538-9787-5491e46f26c8",
+                    "name": "Gramm",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "g",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": true,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.787309+00:00",
+                    "updated_at": "2024-05-16T18:52:09.238071+00:00"
+                },
+                "food": {
+                    "id": "034feab3-56ae-4299-8cf1-850e95e0f56b",
+                    "name": "Risottoreis",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-07-05T22:29:30.525799+00:00",
+                    "updated_at": "2024-07-05T22:29:30.525812+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "250 g Risottoreis",
+                "title": null,
+                "original_text": null,
+                "reference_id": "a92e94be-ec50-421d-bf21-cc1324163032"
+            },
+            {
+                "quantity": 0.125,
+                "unit": {
+                    "id": "c49dff04-d6c0-4dcb-8726-7bc2f58848ff",
+                    "name": "Liter",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "L",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": true,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.739603+00:00",
+                    "updated_at": "2024-05-16T18:53:41.243931+00:00"
+                },
+                "food": {
+                    "id": "e21aff40-d41a-4b43-830f-2e6b50add45d",
+                    "name": "Wei\u00dfwein",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-15T22:17:23.009749+00:00",
+                    "updated_at": "2024-05-15T22:17:23.009757+00:00"
+                },
+                "note": "trocken",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "\u00b9/\u2088 L Wei\u00dfwein trocken",
+                "title": null,
+                "original_text": null,
+                "reference_id": "7d80cb5c-6b98-4787-b0ba-e2b9c2b1cf57"
+            },
+            {
+                "quantity": 0.5,
+                "unit": {
+                    "id": "c49dff04-d6c0-4dcb-8726-7bc2f58848ff",
+                    "name": "Liter",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "L",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": true,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.739603+00:00",
+                    "updated_at": "2024-05-16T18:53:41.243931+00:00"
+                },
+                "food": {
+                    "id": "66df5ce6-388c-4d99-a3f3-6a9e190e7607",
+                    "name": "Gem\u00fcsebr\u00fche",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-15T21:28:00.516266+00:00",
+                    "updated_at": "2024-05-15T21:28:00.516281+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "\u00b9/\u2082 L Gem\u00fcsebr\u00fche",
+                "title": null,
+                "original_text": null,
+                "reference_id": "bf0aab1c-b23c-4608-9f0d-91301a56d1f7"
+            },
+            {
+                "quantity": 12.5,
+                "unit": {
+                    "id": "29c898c7-f043-4538-9787-5491e46f26c8",
+                    "name": "Gramm",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "g",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": true,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.787309+00:00",
+                    "updated_at": "2024-05-16T18:52:09.238071+00:00"
+                },
+                "food": {
+                    "id": "a5f17533-6076-4202-82cb-a0983858d16f",
+                    "name": "Butter",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-13T18:03:42.575017+00:00",
+                    "updated_at": "2024-05-13T18:03:42.575025+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "12 \u00b9/\u2082 g Butter",
+                "title": null,
+                "original_text": null,
+                "reference_id": "813ed8c4-145e-47f3-bdc8-17f434baace1"
+            },
+            {
+                "quantity": 12.5,
+                "unit": {
+                    "id": "29c898c7-f043-4538-9787-5491e46f26c8",
+                    "name": "Gramm",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "g",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": true,
+                    "aliases": [],
+                    "created_at": "2024-05-13T18:03:40.787309+00:00",
+                    "updated_at": "2024-05-16T18:52:09.238071+00:00"
+                },
+                "food": {
+                    "id": "0406be4f-2a6c-4f5a-ad7e-c76ed8947f5c",
+                    "name": "Parmesan",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-07-05T22:30:05.450863+00:00",
+                    "updated_at": "2024-07-05T22:30:05.450877+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "12 \u00b9/\u2082 g Parmesan",
+                "title": null,
+                "original_text": null,
+                "reference_id": "64ae90b2-70e3-480a-bac1-3a5648e16bc2"
+            },
+            {
+                "quantity": 0.5,
+                "unit": {
+                    "id": "a28c0b29-10ce-448a-8794-b6fd769c0ff1",
+                    "name": "Bund",
+                    "plural_name": "B\u00fcnde",
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "fraction": true,
+                    "abbreviation": "",
+                    "plural_abbreviation": "",
+                    "use_abbreviation": false,
+                    "aliases": [],
+                    "created_at": "2024-05-15T21:44:52.381770+00:00",
+                    "updated_at": "2024-05-16T18:55:49.803227+00:00"
+                },
+                "food": {
+                    "id": "7144be5f-d3e7-44a9-afdb-2398c17e7a5a",
+                    "name": "Petersilie",
+                    "plural_name": null,
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-13T18:03:42.221473+00:00",
+                    "updated_at": "2024-05-13T18:03:42.221481+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "\u00b9/\u2082 Bund Petersilie",
+                "title": null,
+                "original_text": null,
+                "reference_id": "cb3ac321-d47f-46dd-97f2-96e0facd847e"
+            },
+            {
+                "quantity": 0.25,
+                "unit": null,
+                "food": {
+                    "id": "ccba77fb-d9d4-4ef0-a934-c177f0db1d40",
+                    "name": "Zitrone",
+                    "plural_name": "Zitronen",
+                    "description": "",
+                    "extras": {},
+                    "on_hand": false,
+                    "label_id": null,
+                    "aliases": [],
+                    "label": null,
+                    "created_at": "2024-05-15T21:18:40.438651+00:00",
+                    "updated_at": "2024-07-25T20:45:05.060002+00:00"
+                },
+                "note": "",
+                "is_food": true,
+                "disable_amount": false,
+                "display": "\u00b9/\u2084 Zitrone",
+                "title": null,
+                "original_text": null,
+                "reference_id": "040ee614-ebf6-4033-af82-2de2315debf8"
+            }
+        ],
+        "recipe_instructions": [
+            {
+                "id": "1bd04d4f-96e0-401e-9c6c-dfce16c66dee",
+                "title": "",
+                "text": "Die Zwiebeln w\u00fcrfeln und in \u00d6l anschwitzen.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "1d7ff9c6-aa5b-4005-b040-3a6b5ab5ca99"
+                    }
+                ]
+            },
+            {
+                "id": "824bdb6a-26e3-4c02-be07-906c17497b79",
+                "title": "",
+                "text": "Den Knoblauch und Reis dazugeben und bei st\u00e4ndigem R\u00fchren anschwitzen.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "d631877c-cec2-4c17-ac86-36137ac000cc"
+                    },
+                    {
+                        "reference_id": "a92e94be-ec50-421d-bf21-cc1324163032"
+                    }
+                ]
+            },
+            {
+                "id": "38d62cc3-5659-4c81-a259-9b2045308c15",
+                "title": "",
+                "text": "Gem\u00fcsebr\u00fche aufsetzen.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "bf0aab1c-b23c-4608-9f0d-91301a56d1f7"
+                    }
+                ]
+            },
+            {
+                "id": "c6198c29-b7d1-4dee-96e3-b24cc804f666",
+                "title": "",
+                "text": "Mit dem Wein abl\u00f6schen.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "7d80cb5c-6b98-4787-b0ba-e2b9c2b1cf57"
+                    }
+                ]
+            },
+            {
+                "id": "f1dc3dff-e67e-4eef-bcce-a18db667226a",
+                "title": "",
+                "text": "Wenn der Wein verkocht ist, die Br\u00fche kellenweise zugeben und umr\u00fchren.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "bf0aab1c-b23c-4608-9f0d-91301a56d1f7"
+                    }
+                ]
+            },
+            {
+                "id": "57c531b7-ff5c-4d8b-90ee-b995ffd69fa1",
+                "title": "",
+                "text": "W\u00e4hrenddessen den Lachs abtupfen, etwas Salz in ihn einarbeiten und langsam anbraten.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "d864e6ef-c404-4543-b394-587ff0603d9c"
+                    }
+                ]
+            },
+            {
+                "id": "21ba1cdc-fdde-42ee-8500-62efd52bffd6",
+                "title": "",
+                "text": "Sobald der Reis gar ist (nach ca. 25 Minuten,  er sollte noch Biss haben), Zitronenschale und -saft, Butter, Parmesan und Petersilie unterr\u00fchren und mit Salz und Pfeffer abschmecken.",
+                "ingredient_references": [
+                    {
+                        "reference_id": "cb3ac321-d47f-46dd-97f2-96e0facd847e"
+                    },
+                    {
+                        "reference_id": "813ed8c4-145e-47f3-bdc8-17f434baace1"
+                    },
+                    {
+                        "reference_id": "64ae90b2-70e3-480a-bac1-3a5648e16bc2"
+                    },
+                    {
+                        "reference_id": "040ee614-ebf6-4033-af82-2de2315debf8"
+                    }
+                ]
+            }
+        ],
+        "nutrition": {
+            "calories": "503",
+            "carbohydrate_content": "74.45",
+            "cholesterol_content": null,
+            "fat_content": "15.36",
+            "fiber_content": null,
+            "protein_content": "11.21",
+            "saturated_fat_content": null,
+            "sodium_content": null,
+            "sugar_content": null,
+            "trans_fat_content": null,
+            "unsaturated_fat_content": null
+        },
+        "settings": {
+            "public": false,
+            "show_nutrition": false,
+            "show_assets": false,
+            "landscape_view": false,
+            "disable_comments": true,
+            "disable_amount": false,
+            "locked": false
+        },
+        "assets": [],
+        "notes": [],
+        "extras": {},
+        "comments": []
+    }
+}
