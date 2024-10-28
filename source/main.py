@@ -1,11 +1,10 @@
 import logging
 import os
 
-from dotenv import load_dotenv
-from flask import Flask, request
-
 from bring_handler import BringHandler
+from dotenv import load_dotenv
 from errors import IgnoredIngredient
+from flask import Flask, request
 from ingredient import Ingredient
 from logger_mixin import LoggerMixin
 
@@ -19,9 +18,23 @@ app = Flask(__name__)
 def webhook_handler():
     data = request.get_json(force=True)
 
-    logger.log.info(f'Received recipe "{data["name"]}" from "{request.remote_addr}"')
+    mealie_version_after_2 = True
+    if "name" in data.keys():
+        mealie_version_after_2 = False
 
-    enable_amount = not data["settings"]["disableAmount"]
+    if mealie_version_after_2:
+        logger.log.info(
+            f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"'
+        )
+    else:
+        logger.log.info(
+            f'Received recipe "{data["name"]}" from "{request.remote_addr}"'
+        )
+
+    if mealie_version_after_2:
+        enable_amount = not data["content"]["settings"]["disable_amount"]
+    else:
+        enable_amount = not data["settings"]["disableAmount"]
     if enable_amount:
         logger.log.debug("This recipe has its ingredient amount enabled")
     else:
@@ -29,10 +42,17 @@ def webhook_handler():
             "This recipe has its ingredient amount this disabled --> Its ingredients will not be checked whether they are supposed to be ignored"
         )
 
-    for ingredient in data["recipeIngredient"]:
+    if mealie_version_after_2:
+        ingredients = data["content"]["recipe_ingredient"]
+    else:
+        ingredients = data["recipeIngredient"]
+    for ingredient in ingredients:
         try:
             parsed_ingredient = Ingredient(
-                ingredient, bring_handler.ignored_ingredients, enable_amount
+                ingredient,
+                bring_handler.ignored_ingredients,
+                enable_amount,
+                mealie_version_after_2,
             )
         except ValueError as e:
             logger.log.warning(e)
