@@ -8,7 +8,7 @@ WORKDIR /app
 EXPOSE 8742/tcp
 
 COPY source/*.py .
-COPY source/requirements.txt .
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
