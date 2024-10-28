@@ -57,7 +57,11 @@ class Ingredient(LoggerMixin):
             food_plural_name = self.ingredient_input["food"]["plural_name"]
         else:
             food_plural_name = self.ingredient_input["food"]["pluralName"]
-        quantity = int(self.ingredient_input["quantity"] or 0)
+        quantity_raw = self.ingredient_input["quantity"] or 0
+        if int(quantity_raw) == quantity_raw:
+            quantity = int(quantity_raw)
+        else:
+            quantity = quantity_raw
         unit = self.ingredient_input["unit"]
         note = self.ingredient_input["note"]
 
