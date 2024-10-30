@@ -7,7 +7,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  push-store-image:
+  build-and-push-image:
     runs-on: ubuntu-latest
 
     permissions:
