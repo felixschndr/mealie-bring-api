@@ -22,9 +22,8 @@ Mealie instance and adds the ingredients of a recipe to a specified Bring shoppi
 
 ### With this project
 
-1. The `Mealie instance` sends a `POST` request to this `webserver` with the ingredients in its body.
-2. The `webserver` extracts the ingredients from the request and adds them directly to a list of the users choice via
-   the `Bring API`.
+1. The `client` (e.g. your phone or PC) sends a `POST` request to this `webserver` with the ingredients in its body.
+2. The `webserver` extracts the ingredients from the request and adds them directly to a list of the users choice via the `Bring API`.
 
 ## Deployment
 
@@ -90,8 +89,8 @@ Mealie and this project.
 3. Give it any title (e.g. `Bring` or `Add ingredients to Bring`). This will be visible for the users.
 
    ![adding action](./assets/images/adding_action.png)
-4. For the `URL` input the address where this project is running on followed by a `/` (e.g. `http://localhost:8742/` 
-   or `https://mealie-bring-api.yourlocaldomain.com/` if you are using a reverse proxy)
+4. For the `URL` input the address where this project is running on followed by a `/` (e.g. `http://<ip-of-server>:8742/` or `https://mealie-bring-api.yourlocaldomain.com/` if you are using a reverse proxy)
+   > **Note**: It is important to understand that the HTTP requests to this service originate from your client and NOT your mealie instance. Thus, you have to ensure that your client is able to reach this service (not being blocked by the firewall) and enter the hostname of the server where this service is running on in the `URL` (not `localhost`). 
 5. Change the `Type` to `POST`
 6. Save
 
