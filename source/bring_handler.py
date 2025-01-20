@@ -81,9 +81,22 @@ class BringHandler(LoggerMixin):
         self.log.debug(f"Adding ingredient to Bring: {ingredient}")
 
         if ingredient.specification:
-            self.bring.saveItem(self.list_uuid, ingredient.food, ingredient.specification)
+            if self.check_if_food_is_already_in_list(ingredient.food):
+                self.log.info(
+                    f"The food {ingredient.food} is already in the list. Adding its specification in the title"
+                )
+                self.bring.saveItem(self.list_uuid, f"{ingredient.food} ({ingredient.specification})")
+            else:
+                self.bring.saveItem(self.list_uuid, ingredient.food, ingredient.specification)
         else:
             self.bring.saveItem(self.list_uuid, ingredient.food)
+
+    def check_if_food_is_already_in_list(self, food: str) -> bool:
+        all_saved_foods = self.bring.getItems(self.list_uuid)["purchase"]
+        for saved_food in all_saved_foods:
+            if saved_food["name"].lower() == food.lower():
+                return True
+        return False
 
     def notify_users_about_changes_in_list(self) -> None:
         self.log.debug("Notifying users about changes in shopping list")
