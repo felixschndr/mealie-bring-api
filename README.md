@@ -25,6 +25,8 @@ Mealie instance and adds the ingredients of a recipe to a specified Bring shoppi
 1. The `client` (e.g. your phone or PC) sends a `POST` request to this `webserver` with the ingredients in its body.
 2. The `webserver` extracts the ingredients from the request and adds them directly to a list of the users choice via the `Bring API`.
 
+This integration is entirely local and does not require any service to be exposed to the Internet.
+
 ## Deployment
 
 ### Environment variables
