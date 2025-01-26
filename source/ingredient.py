@@ -19,7 +19,10 @@ class Ingredient:
 
     @staticmethod
     def _get_specification(raw_data: dict) -> str:
-        return f"{Ingredient._get_quantity(raw_data)}{Ingredient._get_unit(raw_data)}{Ingredient._get_note(raw_data)}"
+        specification = f"{Ingredient._get_quantity(raw_data)}{Ingredient._get_unit(raw_data)}"
+        note = Ingredient._get_note(raw_data)
+        specification += note if specification == "" else f" {note}"
+        return specification
 
     @staticmethod
     def _get_quantity(raw_data: dict) -> str:
@@ -53,7 +56,7 @@ class Ingredient:
         if not raw_data["note"]:
             return ""
 
-        return f" ({raw_data['note']})"
+        return f"({raw_data['note']})"
 
     @staticmethod
     def is_ignored(name_of_ingredient: str, ignored_ingredients: list[Ingredient]) -> bool:
