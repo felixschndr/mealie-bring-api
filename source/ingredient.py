@@ -21,8 +21,13 @@ class Ingredient:
     def _get_specification(raw_data: dict) -> str:
         specification = f"{Ingredient._get_quantity(raw_data)}{Ingredient._get_unit(raw_data)}"
         note = Ingredient._get_note(raw_data)
-        specification += note if specification == "" else f" {note}"
-        return specification
+        if specification == "" and note == "":
+            return ""
+        if specification == "":
+            return note
+        if note == "":
+            return specification
+        return f"{specification} {note}"
 
     @staticmethod
     def _get_quantity(raw_data: dict) -> str:
