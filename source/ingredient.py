@@ -57,8 +57,8 @@ class Ingredient:
         return f" ({raw_data['note']})"
 
     @staticmethod
-    def is_ignored(raw_data: dict, ignored_ingredients: list[str]) -> bool:
-        return raw_data["food"]["name"] in ignored_ingredients
+    def is_ignored(raw_data: dict, ignored_ingredients: list[Ingredient]) -> bool:
+        return raw_data["food"]["name"] in Ingredient.to_string_list(ignored_ingredients)
 
     @staticmethod
     def to_string_list(ingredients: list[Ingredient]) -> list[str]:

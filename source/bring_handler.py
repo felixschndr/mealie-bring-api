@@ -15,7 +15,6 @@ class BringHandler(LoggerMixin):
 
         self.bring = loop.run_until_complete(self.initialize())
         self.list_uuid = loop.run_until_complete(self.determine_list_uuid())
-        self.ignored_ingredients = self.parse_ignored_ingredients()
 
     async def initialize(self) -> Bring:
         username = EnvironmentVariableGetter.get("BRING_USERNAME")
@@ -41,22 +40,6 @@ class BringHandler(LoggerMixin):
 
         self.log.critical(f'Can not find a list with the name "{list_name}"')
         sys.exit(1)
-
-    def parse_ignored_ingredients(self) -> list[Ingredient]:
-        try:
-            ignored_ingredients_input = EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
-        except KeyError:
-            self.log.info(
-                'The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. Consider adding something like "Salt,Pepper"'
-            )
-            return []
-
-        ignored_ingredients = [
-            Ingredient(name) for name in ignored_ingredients_input.lower().replace(", ", ",").split(",")
-        ]
-        self.log.info(f"Ignoring ingredients {Ingredient.to_string_list(ignored_ingredients)}")
-
-        return ignored_ingredients
 
     async def add_items(self, ingredients: list[Ingredient]) -> None:
         items = [ingredient.to_dict() for ingredient in ingredients]
