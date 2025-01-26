@@ -12,7 +12,7 @@ repos:
       - id: black
         args: [ "--line-length", "119" ]
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.0
+    rev: 1.8.2
     hooks:
       - id: bandit
         args: [ '-c', '.bandit.yml', '-r' ]
@@ -22,6 +22,6 @@ repos:
       - id: flake8
         additional_dependencies: [ flake8-annotations ]
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
+    rev: v8.23.2
     hooks:
       - id: gitleaks
