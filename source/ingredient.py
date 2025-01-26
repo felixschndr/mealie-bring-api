@@ -8,15 +8,10 @@ import uuid
 class Ingredient:
     name: str
     specification: str = None
-    uuid: str = None
 
     @staticmethod
     def from_raw_data(raw_data: dict) -> Ingredient:
-        return Ingredient(
-            name=Ingredient._get_name(raw_data),
-            specification=Ingredient._get_specification(raw_data),
-            uuid=str(uuid.uuid4()),
-        )
+        return Ingredient(name=Ingredient._get_name(raw_data), specification=Ingredient._get_specification(raw_data))
 
     @staticmethod
     def _get_name(raw_data: dict) -> str:
@@ -65,4 +60,4 @@ class Ingredient:
         return [ingredient.name for ingredient in ingredients]
 
     def to_dict(self) -> dict:
-        return {"itemId": self.name, "spec": self.specification, "uuid": self.uuid}
+        return {"itemId": self.name, "spec": self.specification, "uuid": str(uuid.uuid4())}
