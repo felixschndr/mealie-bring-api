@@ -3,10 +3,9 @@ import sys
 
 import aiohttp
 from bring_api import Bring, BringItemOperation, BringNotificationType
+from environment_variable_getter import EnvironmentVariableGetter
 from ingredient import Ingredient
 from logger_mixin import LoggerMixin
-
-from source.environment_variable_getter import EnvironmentVariableGetter
 
 
 class BringHandler(LoggerMixin):

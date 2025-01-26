@@ -1,14 +1,12 @@
 import asyncio
 import logging
-import os
 
 from bring_handler import BringHandler
 from dotenv import load_dotenv
+from environment_variable_getter import EnvironmentVariableGetter
 from flask import Flask, request
 from ingredient import Ingredient
 from logger_mixin import LoggerMixin
-
-from source.environment_variable_getter import EnvironmentVariableGetter
 
 load_dotenv()
 
@@ -60,7 +58,7 @@ def status_handler() -> str:
 def parse_ignored_ingredients() -> list[Ingredient]:
     try:
         ignored_ingredients_input = EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
-    except KeyError:
+    except RuntimeError:
         logger.log.info(
             'The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. Consider adding something like "Salt,Pepper"'
         )
@@ -80,7 +78,7 @@ if __name__ == "__main__":
     bring_handler = BringHandler(loop)
     ignored_ingredients = parse_ignored_ingredients()
 
-    host = os.getenv("HTTP_HOST", "0.0.0.0")
-    port = int(os.getenv("HTTP_PORT", 8742))
+    host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")
+    port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
     logger.log.info(f"Listening on {host}:{port}")
     app.run(host=host, port=port)
