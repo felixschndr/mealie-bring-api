@@ -64,3 +64,10 @@ class Ingredient:
 
     def to_dict(self) -> dict:
         return {"itemId": self.name, "spec": self.specification, "uuid": str(uuid.uuid4())}
+
+
+@dataclasses.dataclass
+class IngredientWithAmountsDisabled(Ingredient):
+    @staticmethod
+    def from_raw_data(raw_data: dict) -> Ingredient:
+        return IngredientWithAmountsDisabled(name=raw_data["display"])

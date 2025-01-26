@@ -5,7 +5,7 @@ from bring_handler import BringHandler
 from dotenv import load_dotenv
 from environment_variable_getter import EnvironmentVariableGetter
 from flask import Flask, request
-from ingredient import Ingredient
+from ingredient import Ingredient, IngredientWithAmountsDisabled
 from logger_mixin import LoggerMixin
 
 load_dotenv()
@@ -30,17 +30,15 @@ def webhook_handler() -> str:
     ingredients_to_add = []
     ingredients_raw_data = data["content"]["recipe_ingredient"]
     for ingredient_raw_data in ingredients_raw_data:
-        name_of_ingredient = ingredient_raw_data["food"]["name"]
-        if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
-            logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
-            continue
-
-        try:
-            logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
+        logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
+        if enable_amount:
+            name_of_ingredient = ingredient_raw_data["food"]["name"]
+            if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
+                logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
+                continue
             ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
-        except ValueError:
-            logger.log.warning(exc_info=True)
-            continue
+        else:
+            ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
 
     logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
     loop.run_until_complete(bring_handler.add_items(ingredients_to_add))
@@ -60,7 +58,8 @@ def parse_ignored_ingredients() -> list[Ingredient]:
         ignored_ingredients_input = EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
     except RuntimeError:
         logger.log.info(
-            'The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. Consider adding something like "Salt,Pepper"'
+            "The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. "
+            'Consider setting the variable to something like "Salt,Pepper"'
         )
         return []
 
