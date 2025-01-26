@@ -32,10 +32,13 @@ def webhook_handler() -> str:
     ingredients_to_add = []
     ingredients_raw_data = data["content"]["recipe_ingredient"]
     for ingredient_raw_data in ingredients_raw_data:
-        if Ingredient.is_ignored(ingredient_raw_data, ignored_ingredients):
-            logger.log.debug(f"Ignoring ingredient {ingredient_raw_data}")
+        name_of_ingredient = ingredient_raw_data["food"]["name"]
+        if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
+            logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
+            continue
 
         try:
+            logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
             ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
         except ValueError:
             logger.log.warning(exc_info=True)
@@ -63,12 +66,9 @@ def parse_ignored_ingredients() -> list[Ingredient]:
         )
         return []
 
-    ignored_ingredients = [
-        Ingredient(name) for name in ignored_ingredients_input.lower().replace(", ", ",").split(",")
-    ]
-    logger.log.info(f"Ignoring ingredients {Ingredient.to_string_list(ignored_ingredients)}")
-
-    return ignored_ingredients
+    ignored_ingredients_raw = ignored_ingredients_input.replace(", ", ",").split(",")
+    logger.log.info(f"Ignoring ingredients {ignored_ingredients_raw}")
+    return [Ingredient(name.lower()) for name in ignored_ingredients_raw]
 
 
 if __name__ == "__main__":

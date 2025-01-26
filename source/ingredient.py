@@ -24,12 +24,16 @@ class Ingredient:
     @staticmethod
     def _get_quantity(raw_data: dict) -> str:
         quantity_raw = raw_data["quantity"]
+        if quantity_raw is None:
+            return ""
         quantity = int(quantity_raw) if quantity_raw.is_integer() else quantity_raw
         return str(quantity)
 
     @staticmethod
     def _get_unit(raw_data: dict) -> str:
         unit_raw = raw_data["unit"]
+        if unit_raw is None:
+            return ""
         quantity_is_not_one = raw_data["quantity"] != 1
         if quantity_is_not_one:
             if unit_raw["plural_name"]:
@@ -52,12 +56,8 @@ class Ingredient:
         return f" ({raw_data['note']})"
 
     @staticmethod
-    def is_ignored(raw_data: dict, ignored_ingredients: list[Ingredient]) -> bool:
-        return raw_data["food"]["name"] in Ingredient.to_string_list(ignored_ingredients)
-
-    @staticmethod
-    def to_string_list(ingredients: list[Ingredient]) -> list[str]:
-        return [ingredient.name for ingredient in ingredients]
+    def is_ignored(name_of_ingredient: str, ignored_ingredients: list[Ingredient]) -> bool:
+        return name_of_ingredient.lower() in [ingredient.name for ingredient in ignored_ingredients]
 
     def to_dict(self) -> dict:
         return {"itemId": self.name, "spec": self.specification, "uuid": str(uuid.uuid4())}
