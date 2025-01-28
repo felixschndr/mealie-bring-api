@@ -31,14 +31,16 @@ def webhook_handler() -> str:
     ingredients_raw_data = data["content"]["recipe_ingredient"]
     for ingredient_raw_data in ingredients_raw_data:
         logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
-        if enable_amount:
+        if not enable_amount or ingredient_raw_data["food"] is None:
+            # The second case happens if the data is only in the note and the food is not properly set
+            # This often is the case when a recipe is imported from some source and not properly formatted yet
+            ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
+        else:
             name_of_ingredient = ingredient_raw_data["food"]["name"]
             if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
                 logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
                 continue
             ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
-        else:
-            ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
 
     logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
     loop.run_until_complete(bring_handler.add_items(ingredients_to_add))
