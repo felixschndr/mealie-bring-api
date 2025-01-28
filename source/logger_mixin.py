@@ -8,7 +8,7 @@ class LoggerMixin:
         log_level = os.getenv("LOG_LEVEL", "INFO").upper()
         logging.basicConfig(
             stream=sys.stdout,
-            format="[%(asctime)s] [%(name)s] [%(levelname)s] [%(message)s]",
+            format="[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s",
             encoding="utf-8",
             level=log_level,
         )
