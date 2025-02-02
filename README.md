@@ -8,6 +8,9 @@ Mealie instance to be publicly available (from the internet). Since many users w
 This project provides the source code and a container image for a simple webserver which listens for requests by the 
 Mealie instance and adds the ingredients of a recipe to a specified Bring shopping list.
 
+> [!IMPORTANT]  
+> This integration does only support Mealie version >= `2` which was [released in October 2024](https://github.com/mealie-recipes/mealie/releases/tag/v2.0.0). The support for Mealie version < `2` was deprecated in https://github.com/felixschndr/mealie-bring-api/pull/17.
+
 ## Architecture
 
 ### Without this project

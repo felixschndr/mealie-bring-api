@@ -1,11 +1,11 @@
+import asyncio
 import logging
-import os
 
 from bring_handler import BringHandler
 from dotenv import load_dotenv
-from errors import IgnoredIngredient
+from environment_variable_getter import EnvironmentVariableGetter
 from flask import Flask, request
-from ingredient import Ingredient
+from ingredient import Ingredient, IngredientWithAmountsDisabled
 from logger_mixin import LoggerMixin
 
 load_dotenv()
@@ -17,19 +17,9 @@ app = Flask(__name__)
 def webhook_handler() -> str:
     data = request.get_json(force=True)
 
-    mealie_version_after_2 = True
-    if "name" in data.keys():
-        mealie_version_after_2 = False
+    logger.log.info(f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"')
 
-    if mealie_version_after_2:
-        logger.log.info(f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"')
-    else:
-        logger.log.info(f'Received recipe "{data["name"]}" from "{request.remote_addr}"')
-
-    if mealie_version_after_2:
-        enable_amount = not data["content"]["settings"]["disable_amount"]
-    else:
-        enable_amount = not data["settings"]["disableAmount"]
+    enable_amount = not data["content"]["settings"]["disable_amount"]
     if enable_amount:
         logger.log.debug("This recipe has its ingredient amount enabled")
     else:
@@ -37,29 +27,24 @@ def webhook_handler() -> str:
             "This recipe has its ingredient amount this disabled --> Its ingredients will not be checked whether they are supposed to be ignored"
         )
 
-    if mealie_version_after_2:
-        ingredients = data["content"]["recipe_ingredient"]
-    else:
-        ingredients = data["recipeIngredient"]
-    for ingredient in ingredients:
-        try:
-            parsed_ingredient = Ingredient(
-                ingredient,
-                bring_handler.ignored_ingredients,
-                enable_amount,
-                mealie_version_after_2,
-            )
-        except ValueError as e:
-            logger.log.warning(e)
-            continue
-        except IgnoredIngredient as e:
-            logger.log.debug(e)
-            continue
+    ingredients_to_add = []
+    ingredients_raw_data = data["content"]["recipe_ingredient"]
+    for ingredient_raw_data in ingredients_raw_data:
+        logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
+        if not enable_amount or ingredient_raw_data["food"] is None:
+            # The second case happens if the data is only in the note and the food is not properly set
+            # This often is the case when a recipe is imported from some source and not properly formatted yet
+            ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
+        else:
+            name_of_ingredient = ingredient_raw_data["food"]["name"]
+            if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
+                logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
+                continue
+            ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
 
-        bring_handler.add_item_to_list(parsed_ingredient)
-
-    logger.log.info("Added all ingredients to Bring")
-    bring_handler.notify_users_about_changes_in_list()
+    logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
+    loop.run_until_complete(bring_handler.add_items(ingredients_to_add))
+    loop.run_until_complete(bring_handler.notify_users_about_changes_in_list())
 
     return "OK"
 
@@ -70,15 +55,31 @@ def status_handler() -> str:
     return "OK"
 
 
+def parse_ignored_ingredients() -> list[Ingredient]:
+    try:
+        ignored_ingredients_input = EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
+    except RuntimeError:
+        logger.log.info(
+            "The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. "
+            'Consider setting the variable to something like "Salt,Pepper"'
+        )
+        return []
+
+    ignored_ingredients_raw = ignored_ingredients_input.replace(", ", ",").split(",")
+    logger.log.info(f"Ignoring ingredients {ignored_ingredients_raw}")
+    return [Ingredient(name.lower()) for name in ignored_ingredients_raw]
+
+
 if __name__ == "__main__":
     logger = LoggerMixin()
     logger.log = logging.getLogger("Main")
-    bring_handler = BringHandler()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-    host = os.getenv("HTTP_HOST", "0.0.0.0")
-    port = int(os.getenv("HTTP_PORT", 8742))
+    bring_handler = BringHandler(loop)
+    ignored_ingredients = parse_ignored_ingredients()
+
+    host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")
+    port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
     logger.log.info(f"Listening on {host}:{port}")
-    app.run(
-        host=host,
-        port=port,
-    )
+    app.run(host=host, port=port)

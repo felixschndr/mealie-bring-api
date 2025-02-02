@@ -1,3 +1,4 @@
 Flask==3.0.3
-python-bring-api==3.0.0
 python-dotenv==1.0.1
+bring-api==0.9.1
+aiohttp==3.11.10
