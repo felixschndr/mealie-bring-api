@@ -3,14 +3,17 @@ import logging
 
 from bring_handler import BringHandler
 from environment_variable_getter import EnvironmentVariableGetter
-from flask import Flask, request
+from flask import Blueprint, Flask, request
 from ingredient import Ingredient, IngredientWithAmountsDisabled
 from logger_mixin import LoggerMixin
 
 app = Flask(__name__)
 
+basepath = EnvironmentVariableGetter.get("HTTP_BASE_PATH", "")
+base_bp = Blueprint("base_bp", __name__, url_prefix=f"{basepath}")
 
-@app.route("/", methods=["POST"])
+
+@base_bp.route("/", methods=["POST"])
 def webhook_handler() -> str:
     data = request.get_json(force=True)
 
@@ -46,7 +49,7 @@ def webhook_handler() -> str:
     return "OK"
 
 
-@app.route("/status", methods=["GET"])
+@base_bp.route("/status", methods=["GET"])
 def status_handler() -> str:
     logger.log.debug("Got a status request")
     return "OK"
@@ -78,5 +81,6 @@ if __name__ == "__main__":
 
     host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")
     port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
-    logger.log.info(f"Listening on {host}:{port}")
+    logger.log.info(f"Listening on {host}:{port}{basepath}")
+    app.register_blueprint(base_bp)
     app.run(host=host, port=port)
