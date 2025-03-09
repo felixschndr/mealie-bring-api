@@ -2,13 +2,10 @@ import asyncio
 import logging
 
 from bring_handler import BringHandler
-from dotenv import load_dotenv
 from environment_variable_getter import EnvironmentVariableGetter
 from flask import Flask, request
 from ingredient import Ingredient, IngredientWithAmountsDisabled
 from logger_mixin import LoggerMixin
-
-load_dotenv()
 
 app = Flask(__name__)
 
