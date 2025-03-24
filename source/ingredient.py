@@ -2,21 +2,23 @@ from __future__ import annotations
 
 import dataclasses
 import uuid
-
+from pprint import pprint
 
 @dataclasses.dataclass
 class Ingredient:
     name: str
     specification: str = None
-
+    uuid: str = None
     @staticmethod
     def from_raw_data(raw_data: dict) -> Ingredient:
-        return Ingredient(name=Ingredient._get_name(raw_data), specification=Ingredient._get_specification(raw_data))
+        return Ingredient(name=Ingredient._get_name(raw_data), specification=Ingredient._get_specification(raw_data),uuid=Ingredient._get_uuid(raw_data))
 
     @staticmethod
     def _get_name(raw_data: dict) -> str:
-        return raw_data["food"]["name"]
-
+        return raw_data["food"]["name"].capitalize()
+    @staticmethod
+    def _get_uuid(raw_data: dict) -> str:
+        return raw_data.get("reference_id",str(uuid.uuid4()))
     @staticmethod
     def _get_specification(raw_data: dict) -> str:
         specification = f"{Ingredient._get_quantity(raw_data)}{Ingredient._get_unit(raw_data)}"
@@ -36,7 +38,10 @@ class Ingredient:
             return ""
         quantity = int(quantity_raw) if quantity_raw.is_integer() else quantity_raw
         return str(quantity)
-
+    @staticmethod
+    def in_household(raw_data: dict) -> str:
+        ret_val = len(raw_data["food"].get("households_with_ingredient_food",[])) > 0
+        return ret_val
     @staticmethod
     def _get_unit(raw_data: dict) -> str:
         unit_raw = raw_data["unit"]
@@ -68,7 +73,7 @@ class Ingredient:
         return name_of_ingredient.lower() in [ingredient.name for ingredient in ignored_ingredients]
 
     def to_dict(self) -> dict:
-        return {"itemId": self.name, "spec": self.specification, "uuid": str(uuid.uuid4())}
+        return {"itemId": self.name, "spec": self.specification, "uuid": str(self.uuid)}
 
 
 @dataclasses.dataclass
