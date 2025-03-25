@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import uuid
-from pprint import pprint
 
 @dataclasses.dataclass
 class Ingredient:
