@@ -38,7 +38,9 @@ def webhook_handler() -> str:
         else:
             name_of_ingredient = ingredient_raw_data["food"]["name"]
             # Ignore if the ingredient is in the household or on ignored list
-            if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients) or Ingredient.in_household(ingredient_raw_data):
+            if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients) or Ingredient.in_household(
+                ingredient_raw_data
+            ):
                 logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
                 continue
             ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
