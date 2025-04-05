@@ -11,6 +11,10 @@ Mealie instance and adds the ingredients of a recipe to a specified Bring shoppi
 > [!IMPORTANT]  
 > This integration does only support Mealie version >= `2` which was [released in October 2024](https://github.com/mealie-recipes/mealie/releases/tag/v2.0.0). The support for Mealie version < `2` was deprecated in https://github.com/felixschndr/mealie-bring-api/pull/17.
 
+> [!IMPORTANT]  
+> The environment variable `IGNORED_INGREDIENTS` was deprecated in [PR24](https://github.com/felixschndr/mealie-bring-api/pull/24) and is now ignored. If you are using it, migrate to the
+new way of configuring which ingredients shall be ignored. See [down below](https://github.com/felixschndr/mealie-bring-api?tab=readme-ov-file#ignoring-ingredients)
+
 ## Architecture
 
 ### Without this project
@@ -41,13 +45,24 @@ No matter which deployment option you chose you must setup some environment vari
 | `BRING_USERNAME`      | The email address of your bring account                                                                                                                                                                                                                                                    |   Yes    | -                                 | `myuser@myemailprovider.com`   |
 | `BRING_PASSWORD`      | The password of your bring account                                                                                                                                                                                                                                                         |   Yes    | -                                 | `my super secret password`     |
 | `BRING_LIST_NAME`     | The exact name of the list you want to add the ingredients to, supports special characters                                                                                                                                                                                                 |   Yes    | -                                 | `My shopping list with spaces` |
-| `IGNORED_INGREDIENTS` | Ingredients that are never added to the shopping list (things you always have at home), separated by a `,`, case insensitive, **WARNING**: This *only* works for recipes with *enabled* ingredient amounts in the recipe settings! ![recipe settings](./assets/images/recipe_settings.png) |    No    | - (all ingredients will be added) | `Salt,Pepper,Frying oil`       |
 | `LOG_LEVEL`           | The loglevel the application logs at                                                                                                                                                                                                                                                       |    No    | `INFO`                            | `DEBUG`                        |
 | `HTTP_HOST`           | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker                                                                                                                                                     |    No    | `0.0.0.0`                         | `192.168.1.5`                  |
 | `HTTP_PORT`           | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker                                                                                                                                                    |    No    | `8742`                            | `1234`                         |
 | `HTTP_BASE_PATH`      | The path the application listens on. Use this if you use the app behind a reverse proxy and have setup a path (e.g. set this to `/bring` if the application shall listen on `<mealie>.<yourdomain>.tld/bring`)                                                                             |    No    | `""`                              | `/bring`                       |
 
 Ensure to quote your environment variables. Without quotes your password might not be read properly if it contains symbols such as `<`, `&` or `;`.
+
+#### Ignoring ingredients
+
+It is possible to define ingredients that shall never be added to the shopping list. These are ingredients you always have at home (e.g., salt and pepper).
+
+To do so
+1. Open the `Data Management` (under `<your mealie domain>/group/data/foods/`).
+2. Search for the ingredient you don't want to be added to the shopping list.
+3. Click on the edit button.
+4. Enable the checkbox `On Hand`.
+
+   ![](assets/images/food_on_hand.png)
 
 ### Deployment options
 
