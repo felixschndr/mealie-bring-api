@@ -15,7 +15,7 @@ class Ingredient:
 
     @staticmethod
     def _get_name(raw_data: dict) -> str:
-        return raw_data["food"]["name"]
+        return raw_data["food"]["name"].capitalize()
 
     @staticmethod
     def _get_specification(raw_data: dict) -> str:
