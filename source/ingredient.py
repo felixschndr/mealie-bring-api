@@ -64,8 +64,8 @@ class Ingredient:
         return f"({raw_data['note']})"
 
     @staticmethod
-    def is_ignored(name_of_ingredient: str, ignored_ingredients: list[Ingredient]) -> bool:
-        return name_of_ingredient.lower() in [ingredient.name for ingredient in ignored_ingredients]
+    def in_household(raw_data: dict) -> bool:
+        return len(raw_data["food"].get("households_with_ingredient_food", [])) > 0
 
     def to_dict(self) -> dict:
         return {"itemId": self.name, "spec": self.specification, "uuid": str(uuid.uuid4())}

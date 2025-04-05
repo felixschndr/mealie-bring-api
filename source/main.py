@@ -36,9 +36,8 @@ def webhook_handler() -> str:
             # This often is the case when a recipe is imported from some source and not properly formatted yet
             ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
         else:
-            name_of_ingredient = ingredient_raw_data["food"]["name"]
-            if Ingredient.is_ignored(name_of_ingredient, ignored_ingredients):
-                logger.log.debug(f"Ignoring ingredient {name_of_ingredient}")
+            if Ingredient.in_household(ingredient_raw_data):
+                logger.log.info(f"Ignoring ingredient {ingredient_raw_data["food"]["name"]}")
                 continue
             ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data))
 
@@ -55,19 +54,15 @@ def status_handler() -> str:
     return "OK"
 
 
-def parse_ignored_ingredients() -> list[Ingredient]:
+def check_for_ignored_ingredients() -> None:
     try:
-        ignored_ingredients_input = EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
-    except RuntimeError:
-        logger.log.info(
-            "The variable IGNORED_INGREDIENTS is not set. All ingredients will be added. "
-            'Consider setting the variable to something like "Salt,Pepper"'
+        EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
+        logger.log.warning(
+            "The variable IGNORED_INGREDIENTS is deprecated and ignored! "
+            "Take a look README.md for more information on how to ignore ingredients."
         )
-        return []
-
-    ignored_ingredients_raw = ignored_ingredients_input.replace(", ", ",").split(",")
-    logger.log.info(f"Ignoring ingredients {ignored_ingredients_raw}")
-    return [Ingredient(name.lower()) for name in ignored_ingredients_raw]
+    except RuntimeError:
+        pass
 
 
 if __name__ == "__main__":
@@ -76,8 +71,9 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    check_for_ignored_ingredients()
+
     bring_handler = BringHandler(loop)
-    ignored_ingredients = parse_ignored_ingredients()
 
     host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")
     port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
