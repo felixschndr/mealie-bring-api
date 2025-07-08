@@ -54,24 +54,11 @@ def status_handler() -> str:
     return "OK"
 
 
-def check_for_ignored_ingredients() -> None:
-    try:
-        EnvironmentVariableGetter.get("IGNORED_INGREDIENTS")
-        logger.log.warning(
-            "The variable IGNORED_INGREDIENTS is deprecated and ignored! "
-            "Take a look README.md for more information on how to ignore ingredients."
-        )
-    except RuntimeError:
-        pass
-
-
 if __name__ == "__main__":
     logger = LoggerMixin()
     logger.log = logging.getLogger("Main")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-
-    check_for_ignored_ingredients()
 
     bring_handler = BringHandler(loop)
 
