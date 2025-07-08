@@ -11,9 +11,7 @@ Mealie instance and adds the ingredients of a recipe to a specified Bring shoppi
 > [!IMPORTANT]  
 > This integration does only support Mealie version >= `2` which was [released in October 2024](https://github.com/mealie-recipes/mealie/releases/tag/v2.0.0). The support for Mealie version < `2` was deprecated in https://github.com/felixschndr/mealie-bring-api/pull/17.
 
-> [!IMPORTANT]  
-> The environment variable `IGNORED_INGREDIENTS` was deprecated in [PR24](https://github.com/felixschndr/mealie-bring-api/pull/24) and is now ignored. If you are using it, migrate to the
-new way of configuring which ingredients shall be ignored. See [down below](https://github.com/felixschndr/mealie-bring-api?tab=readme-ov-file#ignoring-ingredients)
+
 
 ## Architecture
 
@@ -51,6 +49,10 @@ No matter which deployment option you chose you must setup some environment vari
 | `HTTP_BASE_PATH`      | The path the application listens on. Use this if you use the app behind a reverse proxy and have setup a path (e.g. set this to `/bring` if the application shall listen on `<mealie>.<yourdomain>.tld/bring`)                                                                             |    No    | `""`                              | `/bring`                       |
 
 Ensure to quote your environment variables. Without quotes your password might not be read properly if it contains symbols such as `<`, `&` or `;`.
+
+> [!IMPORTANT]  
+> The environment variable `IGNORED_INGREDIENTS` was deprecated
+in [PR24](https://github.com/felixschndr/mealie-bring-api/pull/24) and is now ignored. If you are using it, migrate to the new way of configuring which ingredients shall be ignored as seen below.
 
 #### Ignoring ingredients
 

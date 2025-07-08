@@ -22,4 +22,3 @@ services:
       BRING_USERNAME: myuser@myemailprovider.com
       BRING_PASSWORD: mysupersecretpassword
       BRING_LIST_NAME: My list has some spaces in it
-      IGNORED_INGREDIENTS: Pepper,Salt,Fying Oil
