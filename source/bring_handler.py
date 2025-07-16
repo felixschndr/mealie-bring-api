@@ -3,7 +3,6 @@ import sys
 
 import aiohttp
 from bring_api import Bring, BringItemOperation, BringNotificationType
-from bring_api.exceptions import BringAuthException
 from environment_variable_getter import EnvironmentVariableGetter
 from ingredient import Ingredient
 from logger_mixin import LoggerMixin
@@ -42,17 +41,12 @@ class BringHandler(LoggerMixin):
         sys.exit(1)
 
     async def add_items(self, ingredients: list[Ingredient]) -> None:
-        try:
-            await self._add_items(ingredients)
-        except BringAuthException as e:
-            if "expired" not in str(e):
-                raise e
-
+        seconds_until_token_expires = self.bring.expires_in
+        self.log.debug(f"Seconds until token expires: {seconds_until_token_expires}")
+        if seconds_until_token_expires < 120:
             self.log.info("The authentication token has expired. Re-logging in...")
             await self._login()
-            await self._add_items(ingredients)
 
-    async def _add_items(self, ingredients: list[Ingredient]) -> None:
         await self.bring.batch_update_list(
             self.list_uuid, [ingredient.to_dict() for ingredient in ingredients], BringItemOperation.ADD
         )
