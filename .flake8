@@ -5,5 +5,8 @@ max-complexity = 18
 select = A,B,C,E,F,W,T4,B9
 suppress-non-returning = true
 kwargs-ignore-function-pattern-extend = (options|load_only)$
+per-file-ignores =
+    tests/*:ANN001,ANN201, ANN401
+    test_*:ANN001,ANN201
 extend-exclude =
     .venv/
