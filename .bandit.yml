@@ -1,4 +1,5 @@
+assert_used:
+  skips: [ '*/test_*.py', '*/conftest.py' ]
+
 exclude_dirs:
   - .venv
-
-skips: ["B104"]
