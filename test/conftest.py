@@ -1,0 +1,218 @@
+import pytest
+
+
+@pytest.fixture
+def food_name_singular() -> str:
+    return "Berry"
+
+
+@pytest.fixture
+def food_name_plural() -> str:
+    return "Berries"
+
+
+@pytest.fixture
+def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str) -> dict:
+    return {
+        "disable_amount": False,
+        "display": f"1 gram {food_name_singular}",
+        "food": {
+            "aliases": [],
+            "created_at": "2025-07-16T19:37:10.688281+00:00",
+            "description": "",
+            "extras": {},
+            "households_with_ingredient_food": [],
+            "id": "00ba16f1-5d1e-4c2a-8a69-91e6af493cb4",
+            "label": {
+                "color": "#959595",
+                "group_id": "173140fd-c29b-438a-9f9f-c689fb2c8919",
+                "id": "e4cedfe5-523d-4c93-93a2-644de17bdc74",
+                "name": "Baking",
+            },
+            "label_id": "e4cedfe5-523d-4c93-93a2-644de17bdc74",
+            "name": food_name_singular,
+            "plural_name": food_name_plural,
+            "updated_at": "2025-07-16T19:37:10.688286+00:00",
+        },
+        "is_food": True,
+        "note": "",
+        "original_text": None,
+        "quantity": 1.0,
+        "reference_id": "4e6da2ee-782a-4e1d-b520-3a3f7ac0423e",
+        "title": "",
+        "unit": {
+            "abbreviation": "g",
+            "aliases": [],
+            "created_at": "2025-07-16T19:36:59.820124+00:00",
+            "description": "",
+            "extras": {},
+            "fraction": True,
+            "id": "e98b35ec-b9e1-4c2d-a81f-274167acad98",
+            "name": "Gram",
+            "plural_abbreviation": "g",
+            "plural_name": "Grams",
+            "updated_at": "2025-07-16T19:36:59.820130+00:00",
+            "use_abbreviation": False,
+        },
+    }
+
+
+@pytest.fixture
+def example_request(ingredient_raw_base_data: dict) -> dict:
+    return {
+        "action": {
+            "action_type": "post",
+            "title": "Recipe action 1",
+            "url": "http://localhost:8742/",
+            "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+            "household_id": "7d54749a-6326-4051-b369-445353bb6678",
+            "id": "5b18b178-0012-4852-8e24-8db146408100",
+        },
+        "content": {
+            "id": "f2315d61-f0c5-4d04-9f09-179e11e9681e",
+            "user_id": "7ceccf57-1fec-4f5d-afbd-f83b842fbcc1",
+            "household_id": "7d54749a-6326-4051-b369-445353bb6678",
+            "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+            "name": "Test Recipe",
+            "slug": "test-recipe",
+            "image": None,
+            "recipe_servings": 5.0,
+            "recipe_yield_quantity": 0.0,
+            "recipe_yield": None,
+            "total_time": "1 Hour",
+            "prep_time": "20 Minutes",
+            "cook_time": None,
+            "perform_time": "40 Minutes",
+            "description": "This is a recipe for testing",
+            "recipe_category": [],
+            "tags": [
+                {
+                    "id": "ebecf734-d8b1-4d30-8fb2-0998451ffa0d",
+                    "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+                    "name": "Baking",
+                    "slug": "baking",
+                },
+                {
+                    "id": "4c6d651d-fda2-441b-9a27-4f6249e6d623",
+                    "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+                    "name": "Easy",
+                    "slug": "easy",
+                },
+            ],
+            "tools": [],
+            "rating": None,
+            "org_url": "https://github.com/mealie-recipes/mealie/",
+            "date_added": "2025-07-17",
+            "date_updated": "2025-07-17T20:37:38.967794+00:00",
+            "created_at": "2025-07-17T20:35:26.577546+00:00",
+            "updated_at": "2025-07-17T20:37:38.980518+00:00",
+            "last_made": None,
+            "recipe_ingredient": [
+                ingredient_raw_base_data,
+                {
+                    "quantity": 1.0,
+                    "unit": None,
+                    "food": {
+                        "id": "41179dd8-6898-4d14-9e95-9871e66d334e",
+                        "name": "Apple",
+                        "plural_name": None,
+                        "description": "",
+                        "extras": {},
+                        "label_id": None,
+                        "aliases": [],
+                        "households_with_ingredient_food": [],
+                        "label": None,
+                        "created_at": "2024-05-15T21:12:09.074060+00:00",
+                        "updated_at": "2024-05-15T21:12:09.074068+00:00",
+                    },
+                    "note": "",
+                    "is_food": True,
+                    "disable_amount": False,
+                    "display": "1 Agavendicksaft",
+                    "title": "",
+                    "original_text": None,
+                    "reference_id": "250ba612-c987-4119-8d74-bc0c55757efa",
+                },
+                {
+                    "quantity": 5.0,
+                    "unit": {
+                        "id": "31de4ce6-3e3c-4a4d-b9fd-6a358f7e381e",
+                        "name": "Spoon",
+                        "plural_name": "Spoons",
+                        "description": "",
+                        "extras": {},
+                        "fraction": True,
+                        "abbreviation": "",
+                        "plural_abbreviation": "",
+                        "use_abbreviation": False,
+                        "aliases": [],
+                        "created_at": "2024-05-13T18:03:40.720646+00:00",
+                        "updated_at": "2024-05-16T18:53:48.842058+00:00",
+                    },
+                    "food": {
+                        "id": "33feea2c-37a6-4245-aeb4-e4c01592e865",
+                        "name": "Salt",
+                        "plural_name": "Salt",
+                        "description": "",
+                        "extras": {},
+                        "label_id": None,
+                        "aliases": [],
+                        "households_with_ingredient_food": [],
+                        "label": None,
+                        "created_at": "2024-05-13T18:03:40.781913+00:00",
+                        "updated_at": "2024-05-18T09:57:59.903685+00:00",
+                    },
+                    "note": "",
+                    "is_food": True,
+                    "disable_amount": False,
+                    "display": "5 Spoons Salt",
+                    "title": "",
+                    "original_text": None,
+                    "reference_id": "4c6d2fd3-a3c7-443c-a91b-036fffc59c66",
+                },
+            ],
+            "recipe_instructions": [
+                {
+                    "id": "a268e8ac-0c8c-45c2-833b-03920558c23c",
+                    "title": "",
+                    "summary": "",
+                    "text": "Mix ingredient 1 and 2\n",
+                    "ingredient_references": [],
+                },
+                {
+                    "id": "2dc1e85a-3cbd-4d67-9671-b8e8816f8813",
+                    "title": "",
+                    "summary": "",
+                    "text": "Add third ingredient",
+                    "ingredient_references": [],
+                },
+            ],
+            "nutrition": {
+                "calories": None,
+                "carbohydrate_content": None,
+                "cholesterol_content": None,
+                "fat_content": None,
+                "fiber_content": None,
+                "protein_content": None,
+                "saturated_fat_content": None,
+                "sodium_content": None,
+                "sugar_content": None,
+                "trans_fat_content": None,
+                "unsaturated_fat_content": None,
+            },
+            "settings": {
+                "public": False,
+                "show_nutrition": False,
+                "show_assets": False,
+                "landscape_view": False,
+                "disable_comments": True,
+                "disable_amount": False,
+                "locked": False,
+            },
+            "assets": [],
+            "notes": [],
+            "extras": {},
+            "comments": [],
+        },
+        "scaled_amount": 2.0,
+    }
