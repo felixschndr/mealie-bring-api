@@ -34,9 +34,7 @@ class BringHandler(LoggerMixin):
         for bring_list in (await self.bring.load_lists())["lists"]:
             if bring_list["name"].lower() == list_name_lower:
                 bring_list_uuid = bring_list["listUuid"]
-                self.log.info(
-                    f'Found the list with the name "{list_name}" (UUID: {bring_list_uuid})'
-                )
+                self.log.info(f'Found the list with the name "{list_name}" (UUID: {bring_list_uuid})')
                 return bring_list_uuid
 
         self.log.critical(f'Can not find a list with the name "{list_name}"')
@@ -44,9 +42,7 @@ class BringHandler(LoggerMixin):
 
     async def add_items(self, ingredients: list[Ingredient]) -> None:
         items = [ingredient.to_dict() for ingredient in ingredients]
-        await self.bring.batch_update_list(
-            self.list_uuid, items, BringItemOperation.ADD
-        )
+        await self.bring.batch_update_list(self.list_uuid, items, BringItemOperation.ADD)
 
     async def notify_users_about_changes_in_list(self) -> None:
         self.log.debug("Notifying users about changes in shopping list")

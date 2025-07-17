@@ -172,17 +172,13 @@ def ingredient_raw_data_with_disabled_amounts(
         ),
     ],
 )
-def test_parse_ingredient(
-    ingredient_input, recipe_scale, expected_name, expected_specification, request
-):
+def test_parse_ingredient(ingredient_input, recipe_scale, expected_name, expected_specification, request):
     expected_ingredient = Ingredient(
         name=request.getfixturevalue(expected_name),
         specification=expected_specification,
     )
 
-    actual_ingredient = Ingredient.from_raw_data(
-        request.getfixturevalue(ingredient_input), recipe_scale
-    )
+    actual_ingredient = Ingredient.from_raw_data(request.getfixturevalue(ingredient_input), recipe_scale)
 
     assert actual_ingredient == expected_ingredient
 
@@ -212,10 +208,7 @@ def test_ingredient_with_amounts_disabled(
     [("ingredient_raw_base_data", False), ("ingredient_raw_data_with_household", True)],
 )
 def test_in_household(ingredient_raw_data, expected_in_household, request):
-    assert (
-        Ingredient.in_household(request.getfixturevalue(ingredient_raw_data))
-        == expected_in_household
-    )
+    assert Ingredient.in_household(request.getfixturevalue(ingredient_raw_data)) == expected_in_household
 
 
 def test_to_dict(food_name_singular):

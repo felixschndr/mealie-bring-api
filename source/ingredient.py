@@ -25,11 +25,7 @@ class Quantity:
         if self.scaled_value is None:
             return ""
         # Convert to integer if it's a whole number
-        value = (
-            int(self.scaled_value)
-            if self.scaled_value.is_integer()
-            else self.scaled_value
-        )
+        value = int(self.scaled_value) if self.scaled_value.is_integer() else self.scaled_value
         return str(value)
 
 
@@ -56,9 +52,7 @@ class Ingredient:
 
     @staticmethod
     def _get_specification(raw_data: dict, quantity: Quantity) -> str:
-        specification = (
-            f"{quantity.formatted}{Ingredient._get_unit_formatted(raw_data, quantity)}"
-        )
+        specification = f"{quantity.formatted}{Ingredient._get_unit_formatted(raw_data, quantity)}"
         note = Ingredient._get_note(raw_data)
 
         if specification == "" and note == "":

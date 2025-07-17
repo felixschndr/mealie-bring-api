@@ -21,6 +21,4 @@ class EnvironmentVariableGetter:
             if default_value is not None:
                 return default_value
 
-            raise RuntimeError(
-                f'The environment variable "{name_of_variable}" is not set!'
-            ) from None
+            raise RuntimeError(f'The environment variable "{name_of_variable}" is not set!') from None
