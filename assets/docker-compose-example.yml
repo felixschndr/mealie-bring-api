@@ -16,9 +16,9 @@ services:
     image: ghcr.io/felixschndr/mealie-bring-api:latest
     container_name: mealie_bring_api
     ports:
-      - 12001:8742
+      - "12001:8742" # external:internal
     environment:
       # Take a look at the README for an explanation of the environment variables
-      BRING_USERNAME: myuser@myemailprovider.com
-      BRING_PASSWORD: mysupersecretpassword
-      BRING_LIST_NAME: My list has some spaces in it
+      BRING_USERNAME: "myuser@myemailprovider.com"
+      BRING_PASSWORD: "mysupersecretpassword"
+      BRING_LIST_NAME: "My list has some spaces in it"
