@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "Mealie Bring API"
+description = "A simple webserver that allows ingredients sent by Mealie to be added to a bring shopping list"
+authors = ["Felix Schneider <mail@fschneider.me>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.1.1"
+python-dotenv = "^1.1.1"
+aiohttp = "^3.12.14"
+bring-api = "0.9.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"

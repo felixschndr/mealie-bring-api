@@ -8,8 +8,11 @@ WORKDIR /app
 EXPOSE 8742/tcp
 
 COPY source/*.py .
-COPY requirements.txt .
+COPY pyproject.toml .
+COPY poetry.lock .
 
-RUN pip install -r requirements.txt
+RUN pip install poetry && \
+    POETRY_VIRTUALENVS_CREATE=false poetry install && \
+    pip uninstall -y poetry
 
 CMD python main.py
