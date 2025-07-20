@@ -7,7 +7,7 @@ WORKDIR /app
 
 EXPOSE 8742/tcp
 
-COPY source/*.py .
+COPY source/ source/
 COPY pyproject.toml .
 COPY poetry.lock .
 
@@ -15,4 +15,4 @@ RUN pip install poetry && \
     POETRY_VIRTUALENVS_CREATE=false poetry install && \
     pip uninstall -y poetry
 
-CMD python main.py
+CMD python -m source.main

@@ -1,5 +1,6 @@
 import pytest
-from ingredient import Ingredient, IngredientWithAmountsDisabled
+
+from source.ingredient import Ingredient, IngredientWithAmountsDisabled
 
 
 @pytest.fixture
