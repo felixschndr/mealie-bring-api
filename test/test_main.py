@@ -3,9 +3,10 @@ import logging
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from bring_handler import BringHandler
-from logger_mixin import LoggerMixin
-from main import Flask, MealieApp
+
+from source.bring_handler import BringHandler
+from source.logger_mixin import LoggerMixin
+from source.main import Flask, MealieApp
 
 
 @pytest.fixture
@@ -64,9 +65,9 @@ def test_process_webhook(mealie_app, mock_event_loop, mock_bring_handler, exampl
 def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = False
 
-    with patch("main.Ingredient.in_household", return_value=False):
-        with patch("main.Ingredient.from_raw_data") as mock_from_raw_data:
-            with patch("main.IngredientWithAmountsDisabled.from_raw_data") as mock_disabled_from_raw_data:
+    with patch("source.main.Ingredient.in_household", return_value=False):
+        with patch("source.main.Ingredient.from_raw_data") as mock_from_raw_data:
+            with patch("source.main.IngredientWithAmountsDisabled.from_raw_data") as mock_disabled_from_raw_data:
                 result = mealie_app.process_recipe_data(example_request)
 
                 expected_ingredient_calls = 0
@@ -86,7 +87,7 @@ def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
 def test_process_recipe_data_with_disabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = True
 
-    with patch("main.IngredientWithAmountsDisabled.from_raw_data") as mock_from_raw_data:
+    with patch("source.main.IngredientWithAmountsDisabled.from_raw_data") as mock_from_raw_data:
         result = mealie_app.process_recipe_data(example_request)
 
         assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"])
@@ -99,8 +100,8 @@ def test_process_recipe_data_with_household_ingredient(mealie_app, example_reque
     def mock_in_household(ingredient_data):
         return ingredient_data == example_request["content"]["recipe_ingredient"][0]
 
-    with patch("main.Ingredient.in_household", side_effect=mock_in_household):
-        with patch("main.Ingredient.from_raw_data") as mock_from_raw_data:
+    with patch("source.main.Ingredient.in_household", side_effect=mock_in_household):
+        with patch("source.main.Ingredient.from_raw_data") as mock_from_raw_data:
             mealie_app.process_recipe_data(example_request)
 
             assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"]) - 1

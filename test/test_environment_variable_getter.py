@@ -1,5 +1,6 @@
 import pytest
-from environment_variable_getter import EnvironmentVariableGetter
+
+from source.environment_variable_getter import EnvironmentVariableGetter
 
 
 @pytest.fixture
