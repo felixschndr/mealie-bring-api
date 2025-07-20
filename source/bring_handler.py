@@ -12,22 +12,27 @@ class BringHandler(LoggerMixin):
     def __init__(self, loop: asyncio.AbstractEventLoop):
         super().__init__()
 
-        self.bring = loop.run_until_complete(self.initialize())
+        self.bring = None
         self.list_uuid = loop.run_until_complete(self.determine_list_uuid())
 
-    async def initialize(self) -> Bring:
-        username = EnvironmentVariableGetter.get("BRING_USERNAME")
-        password = EnvironmentVariableGetter.get("BRING_PASSWORD")
+    async def _login(self) -> None:
+        if self.bring:
+            # Close the HTTP Session if we are re-authenticating as the library would log an error otherwise
+            await self.bring._session.close()
 
-        session = aiohttp.ClientSession()
-        bring = Bring(session, username, password)
+        self.bring = Bring(
+            aiohttp.ClientSession(),
+            EnvironmentVariableGetter.get("BRING_USERNAME"),
+            EnvironmentVariableGetter.get("BRING_PASSWORD"),
+        )
+
         self.log.info("Attempting the login into Bring")
-        await bring.login()
+        await self.bring.login()
         self.log.info("Login successful")
 
-        return bring
-
     async def determine_list_uuid(self) -> str:
+        await self._login()
+
         list_name = EnvironmentVariableGetter.get("BRING_LIST_NAME")
 
         list_name_lower = list_name.lower()
@@ -41,8 +46,15 @@ class BringHandler(LoggerMixin):
         sys.exit(1)
 
     async def add_items(self, ingredients: list[Ingredient]) -> None:
-        items = [ingredient.to_dict() for ingredient in ingredients]
-        await self.bring.batch_update_list(self.list_uuid, items, BringItemOperation.ADD)
+        seconds_until_token_expires = self.bring.expires_in
+        self.log.debug(f"Seconds until token expires: {seconds_until_token_expires}")
+        if seconds_until_token_expires < 120:
+            self.log.info("The authentication token has expired. Re-logging in...")
+            await self._login()
+
+        await self.bring.batch_update_list(
+            self.list_uuid, [ingredient.to_dict() for ingredient in ingredients], BringItemOperation.ADD
+        )
 
     async def notify_users_about_changes_in_list(self) -> None:
         self.log.debug("Notifying users about changes in shopping list")
