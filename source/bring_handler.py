@@ -16,11 +16,16 @@ class BringHandler(LoggerMixin):
         self.list_uuid = loop.run_until_complete(self.determine_list_uuid())
 
     async def _login(self) -> None:
+        if self.bring:
+            # Close the HTTP Session if we are re-authenticating as the library would log an error otherwise
+            await self.bring._session.close()
+
         self.bring = Bring(
             aiohttp.ClientSession(),
             EnvironmentVariableGetter.get("BRING_USERNAME"),
             EnvironmentVariableGetter.get("BRING_PASSWORD"),
         )
+
         self.log.info("Attempting the login into Bring")
         await self.bring.login()
         self.log.info("Login successful")
