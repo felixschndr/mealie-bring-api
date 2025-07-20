@@ -1,0 +1,102 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  PLATFORMS: linux/amd64,linux/arm64
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run tests
+        run: |
+          poetry run pytest
+
+  validate-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Build Docker image
+        run: docker build -t mealie-bring-api:test .
+
+      - name: Run Docker container and validate error message
+        run: |
+          # Run the container without required environment variables and capture output
+          output=$(docker run --rm mealie-bring-api:test 2>&1 || true)
+
+          # Check if the output contains the expected error message
+          if echo "$output" | grep -q "The environment variable \"BRING_USERNAME\" is not set!"; then
+            echo "Found expected error message in output"
+          else
+            echo "Expected error message not found in output"
+            echo "Actual output: $output"
+            exit 1
+          fi
+
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs: [test, validate-docker-image]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          platforms: ${{ env.PLATFORMS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Docker image as latest
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          platforms: ${{ env.PLATFORMS }}
+          tags: ${{ steps.meta.outputs.tags }},${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
