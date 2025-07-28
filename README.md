@@ -127,8 +127,12 @@ Mealie and this project.
    - You should now see the ingredients in your list
    - You should see some output in the logfile
    ```text
-   mealie_bring_api | [2024-05-18 13:38:41,090] [LoggerMixin] [INFO] [Received recipe "Apple crumble" from "https://mealie-bring-api.yourlocaldomain.com"]
-   mealie_bring_api | [2024-05-18 13:38:45,373] [LoggerMixin] [INFO] [Added all ingredients to Bring]
+   [2025-07-28 15:23:11,785] [BringHandler] [INFO] Attempting the login into Bring
+   [2025-07-28 15:23:12,589] [BringHandler] [INFO] Login successful
+   [2025-07-28 15:23:12,729] [BringHandler] [INFO] Found the list with the name "My List" (UUID: 12345678-1234-1234-1234-12345678)   
+
+   [2025-07-28 15:24:33,872] [Main] [INFO] Received recipe "Apfelstrudel" from "1.2.3.4"
+   [2025-07-28 15:24:33,873] [Main] [INFO] Adding ingredients to Bring: [Ingredient(name='Butter', specification='60 Gramm'), Ingredient(name='Semmelbrösel', specification='80 Gramm (oder Mandelsplitter)'), Ingredient(name='Mandelsplitter', specification='80 Gramm'), Ingredient(name='Zitronensaft', specification='30 Milliliter'), Ingredient(name='Zucker', specification='80 Gramm'), Ingredient(name='Zimt', specification='1 Teelöffel'), Ingredient(name='Apfel', specification='1 Kilogramm'), Ingredient(name='Rosinen', specification='150 Gramm')]
    ```
 
 ## Maintenance
