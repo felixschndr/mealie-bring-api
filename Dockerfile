@@ -15,4 +15,4 @@ RUN pip install poetry && \
     POETRY_VIRTUALENVS_CREATE=false poetry install && \
     pip uninstall -y poetry
 
-CMD python -m source.main
+CMD python -m source.mealie_bring_api

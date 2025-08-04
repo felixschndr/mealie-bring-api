@@ -10,7 +10,7 @@ from source.ingredient import Ingredient, IngredientWithAmountsDisabled
 from source.logger_mixin import LoggerMixin
 
 
-class MealieApp:
+class MealieBringAPI:
     def __init__(self):
         self.host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")  # nosec: B104
         self.port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
@@ -100,6 +100,6 @@ class MealieApp:
 app = Flask(__name__)
 
 if __name__ == "__main__":
-    mealie_app = MealieApp()
+    mealie_app = MealieBringAPI()
     app = mealie_app.app
     mealie_app.run()

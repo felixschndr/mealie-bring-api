@@ -6,7 +6,7 @@ import pytest
 
 from source.bring_handler import BringHandler
 from source.logger_mixin import LoggerMixin
-from source.main import Flask, MealieApp
+from source.mealie_bring_api import Flask, MealieBringAPI
 
 
 @pytest.fixture
@@ -41,12 +41,12 @@ def mock_flask_app():
 
 @pytest.fixture
 def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mock_flask_app):
-    monkeypatch.setattr(MealieApp, "_create_logger", lambda self: mock_logger)
-    monkeypatch.setattr(MealieApp, "_create_event_loop", lambda self: mock_event_loop)
-    monkeypatch.setattr(MealieApp, "_create_bring_handler", lambda self, loop: mock_bring_handler)
-    monkeypatch.setattr(MealieApp, "_create_app", lambda self: mock_flask_app)
+    monkeypatch.setattr(MealieBringAPI, "_create_logger", lambda self: mock_logger)
+    monkeypatch.setattr(MealieBringAPI, "_create_event_loop", lambda self: mock_event_loop)
+    monkeypatch.setattr(MealieBringAPI, "_create_bring_handler", lambda self, loop: mock_bring_handler)
+    monkeypatch.setattr(MealieBringAPI, "_create_app", lambda self: mock_flask_app)
 
-    return MealieApp()
+    return MealieBringAPI()
 
 
 def test_process_webhook(mealie_app, mock_event_loop, mock_bring_handler, example_request):
@@ -65,9 +65,11 @@ def test_process_webhook(mealie_app, mock_event_loop, mock_bring_handler, exampl
 def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = False
 
-    with patch("source.main.Ingredient.in_household", return_value=False):
-        with patch("source.main.Ingredient.from_raw_data") as mock_from_raw_data:
-            with patch("source.main.IngredientWithAmountsDisabled.from_raw_data") as mock_disabled_from_raw_data:
+    with patch("source.mealie_bring_api.Ingredient.in_household", return_value=False):
+        with patch("source.mealie_bring_api.Ingredient.from_raw_data") as mock_from_raw_data:
+            with patch(
+                "source.mealie_bring_api.IngredientWithAmountsDisabled.from_raw_data"
+            ) as mock_disabled_from_raw_data:
                 result = mealie_app.process_recipe_data(example_request)
 
                 expected_ingredient_calls = 0
@@ -87,7 +89,7 @@ def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
 def test_process_recipe_data_with_disabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = True
 
-    with patch("source.main.IngredientWithAmountsDisabled.from_raw_data") as mock_from_raw_data:
+    with patch("source.mealie_bring_api.IngredientWithAmountsDisabled.from_raw_data") as mock_from_raw_data:
         result = mealie_app.process_recipe_data(example_request)
 
         assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"])
@@ -100,8 +102,8 @@ def test_process_recipe_data_with_household_ingredient(mealie_app, example_reque
     def mock_in_household(ingredient_data):
         return ingredient_data == example_request["content"]["recipe_ingredient"][0]
 
-    with patch("source.main.Ingredient.in_household", side_effect=mock_in_household):
-        with patch("source.main.Ingredient.from_raw_data") as mock_from_raw_data:
+    with patch("source.mealie_bring_api.Ingredient.in_household", side_effect=mock_in_household):
+        with patch("source.mealie_bring_api.Ingredient.from_raw_data") as mock_from_raw_data:
             mealie_app.process_recipe_data(example_request)
 
             assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"]) - 1
