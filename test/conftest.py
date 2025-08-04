@@ -14,7 +14,6 @@ def food_name_plural() -> str:
 @pytest.fixture
 def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str) -> dict:
     return {
-        "disable_amount": False,
         "display": f"1 gram {food_name_singular}",
         "food": {
             "aliases": [],
@@ -34,7 +33,6 @@ def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str) -> 
             "plural_name": food_name_plural,
             "updated_at": "2025-07-16T19:37:10.688286+00:00",
         },
-        "is_food": True,
         "note": "",
         "original_text": None,
         "quantity": 1.0,
@@ -126,8 +124,6 @@ def example_request(ingredient_raw_base_data: dict) -> dict:
                         "updated_at": "2024-05-15T21:12:09.074068+00:00",
                     },
                     "note": "",
-                    "is_food": True,
-                    "disable_amount": False,
                     "display": "1 Agavendicksaft",
                     "title": "",
                     "original_text": None,
@@ -163,8 +159,6 @@ def example_request(ingredient_raw_base_data: dict) -> dict:
                         "updated_at": "2024-05-18T09:57:59.903685+00:00",
                     },
                     "note": "",
-                    "is_food": True,
-                    "disable_amount": False,
                     "display": "5 Spoons Salt",
                     "title": "",
                     "original_text": None,
@@ -206,7 +200,6 @@ def example_request(ingredient_raw_base_data: dict) -> dict:
                 "show_assets": False,
                 "landscape_view": False,
                 "disable_comments": True,
-                "disable_amount": False,
                 "locked": False,
             },
             "assets": [],

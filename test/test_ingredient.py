@@ -63,7 +63,6 @@ def ingredient_raw_data_with_disabled_amounts(
         "disable_amount": True,
         "display": ingredient_with_disabled_amounts_display,
         "food": None,
-        "is_food": False,
         "note": ingredient_with_disabled_amounts_display,
         "original_text": None,
         "quantity": 1.0,

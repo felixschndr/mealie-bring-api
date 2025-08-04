@@ -65,7 +65,8 @@ class MealieApp:
         return "OK"
 
     def process_recipe_data(self, data: dict) -> list[Union[Ingredient, IngredientWithAmountsDisabled]]:
-        enable_amount = not data["content"]["settings"]["disable_amount"]
+        # was deprecated in https://github.com/mealie-recipes/mealie/pull/5684
+        enable_amount = not data["content"]["settings"].get("disable_amount", False)
         if enable_amount:
             self.logger.log.debug("This recipe has its ingredient amount enabled")
         else:
