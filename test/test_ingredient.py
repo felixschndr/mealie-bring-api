@@ -13,7 +13,7 @@ def ingredient_raw_data_with_higher_quantity(ingredient_raw_base_data: dict) -> 
 def ingredient_raw_data_with_unit_abbreviation_instead_of_name(
     ingredient_raw_base_data: dict,
 ) -> dict:
-    ingredient_raw_base_data["unit"]["name"] = ""
+    ingredient_raw_base_data["unit"]["use_abbreviation"] = True
     return ingredient_raw_base_data
 
 
@@ -21,7 +21,7 @@ def ingredient_raw_data_with_unit_abbreviation_instead_of_name(
 def ingredient_raw_data_with_unit_abbreviation_instead_of_name_and_higher_quantity(
     ingredient_raw_base_data: dict,
 ) -> dict:
-    ingredient_raw_base_data["unit"]["plural_name"] = ""
+    ingredient_raw_base_data["unit"]["use_abbreviation"] = True
     ingredient_raw_base_data["quantity"] = 2.0
     return ingredient_raw_base_data
 
