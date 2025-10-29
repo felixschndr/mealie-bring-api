@@ -2,12 +2,13 @@ import asyncio
 import logging
 from typing import Union
 
-from flask import Blueprint, Flask, Request, request
+from flask import Blueprint, Flask, request
 
 from source.bring_handler import BringHandler
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.ingredient import Ingredient, IngredientWithAmountsDisabled
 from source.logger_mixin import LoggerMixin
+from source.mealie_handler import MealieHandler
 
 
 class MealieBringAPI:
@@ -19,6 +20,7 @@ class MealieBringAPI:
         self.logger = self._create_logger()
         self.loop = self._create_event_loop()
         self.bring_handler = self._create_bring_handler(self.loop)
+        self.mealie_handler = MealieHandler()
         self.app = self._create_app()
 
     @staticmethod
@@ -41,8 +43,25 @@ class MealieBringAPI:
         base_bp = Blueprint("base_bp", __name__, url_prefix=self.basepath)
 
         @base_bp.route("/", methods=["POST"])
-        def webhook_handler() -> str:
-            return self.process_webhook(request)
+        def copy_ingredients_from_recipe_to_bring() -> str:
+            data = request.get_json(force=True)
+            self.logger.log.info(f'Received recipe "{data["content"]["name"]}" from "{request.remote_addr}"')
+
+            self._add_ingredients_to_bring(self.process_recipe_data(data))
+
+            return "OK"
+
+        @base_bp.route("/move-ingredients-from-shopping-list", methods=["POST"])
+        def move_ingredients_from_shopping_list_to_bring() -> str | tuple[str, int]:
+            if not self.mealie_handler.mealie_is_setup:
+                self.logger.log.warning("Mealie is not setup! See the logs above for more information.")
+                return "", 400
+
+            self.logger.log.info("Moving ingredients from shopping list to Bring")
+
+            self._add_ingredients_to_bring(self.mealie_handler.get_ingredients_from_shopping_list())
+
+            return "OK"
 
         @base_bp.route("/status", methods=["GET"])
         def status_handler() -> str:
@@ -51,18 +70,6 @@ class MealieBringAPI:
 
         app.register_blueprint(base_bp)
         return app
-
-    def process_webhook(self, request_obj: Request) -> str:
-        data = request_obj.get_json(force=True)
-        self.logger.log.info(f'Received recipe "{data["content"]["name"]}" from "{request_obj.remote_addr}"')
-
-        ingredients_to_add = self.process_recipe_data(data)
-
-        self.logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
-        self.loop.run_until_complete(self.bring_handler.add_items(ingredients_to_add))
-        self.loop.run_until_complete(self.bring_handler.notify_users_about_changes_in_list())
-
-        return "OK"
 
     def process_recipe_data(self, data: dict) -> list[Union[Ingredient, IngredientWithAmountsDisabled]]:
         # was deprecated in https://github.com/mealie-recipes/mealie/pull/5684
@@ -91,6 +98,16 @@ class MealieBringAPI:
                 ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data, recipe_scale))
 
         return ingredients_to_add
+
+    def _add_ingredients_to_bring(self, ingredients_to_add: list[Ingredient]) -> None:
+        if not ingredients_to_add:
+            self.logger.log.warning("There are no ingredients to add")
+            return
+
+        self.logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
+        self.loop.run_until_complete(self.bring_handler.add_items(ingredients_to_add))
+
+        self.loop.run_until_complete(self.bring_handler.notify_users_about_changes_in_list())
 
     def run(self) -> None:
         self.logger.log.info(f"Listening on {self.host}:{self.port}{self.basepath}")
