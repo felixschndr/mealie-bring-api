@@ -69,18 +69,23 @@ class Ingredient:
         if unit_raw is None:
             return ""
 
+        use_abbreviation = unit_raw.get("use_abbreviation") or unit_raw.get("useAbbreviation")
         if not quantity.is_one:
-            if unit_raw["plural_name"]:
+            # The API of Mealie has different naming conventions depending on the endpoint
+            plural_abbreviation = unit_raw.get("plural_abbreviation") or unit_raw.get("pluralAbbreviation")
+            if plural_abbreviation and use_abbreviation:
+                return plural_abbreviation
+
+            plural_name = unit_raw.get("plural_name") or unit_raw.get("pluralName")
+            if plural_name:
                 # For None quantity case, don't add a leading space if formatted is empty
                 prefix = " " if quantity.formatted else ""
-                return f"{prefix}{unit_raw['plural_name']}"
-            if unit_raw["plural_abbreviation"]:
-                return unit_raw["plural_abbreviation"]
+                return f"{prefix}{plural_name}"
 
-        if unit_raw["name"]:
-            return f" {unit_raw['name']}"
-        if unit_raw["abbreviation"]:
+        if unit_raw.get("abbreviation") and use_abbreviation:
             return unit_raw["abbreviation"]
+        if unit_raw.get("name"):
+            return f" {unit_raw['name']}"
 
         return ""
 
