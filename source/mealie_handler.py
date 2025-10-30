@@ -26,6 +26,10 @@ class MealieHandler(LoggerMixin):
             return
 
         self.shopping_list_uuid = EnvironmentVariableGetter.get("MEALIE_SHOPPING_LIST_UUID", "")
+        if self.shopping_list_uuid:
+            self.log.info(f"Will filter items for shopping list with UUID {self.shopping_list_uuid}")
+        else:
+            self.log.info("No shopping list UUID specified --> Will add the ingredients of all shopping lists")
 
         self._try_api_key()
 
@@ -54,12 +58,9 @@ class MealieHandler(LoggerMixin):
         items_of_shopping_list = response.json()["items"]
 
         if self.shopping_list_uuid:
-            self.log.info(f"Filtering for shopping list with UUID {self.shopping_list_uuid}")
             items_of_shopping_list = [
                 item for item in items_of_shopping_list if item["shoppingListId"] == self.shopping_list_uuid
             ]
-        else:
-            self.log.info("No shopping list UUID specified --> Will add the ingredients of all shopping lists")
 
         self._delete_items_from_shopping_list([item["id"] for item in items_of_shopping_list])
 
