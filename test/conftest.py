@@ -1,5 +1,7 @@
 import pytest
 
+from source.ingredient import Ingredient
+
 
 @pytest.fixture
 def food_name_singular() -> str:
@@ -209,3 +211,13 @@ def example_request(ingredient_raw_base_data: dict) -> dict:
         },
         "scaled_amount": 2.0,
     }
+
+
+@pytest.fixture
+def first_ingredient(food_name_singular: str) -> Ingredient:
+    return Ingredient(name=food_name_singular)
+
+
+@pytest.fixture
+def second_ingredient() -> Ingredient:
+    return Ingredient(name="Bread")

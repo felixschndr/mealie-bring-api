@@ -49,19 +49,6 @@ def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mo
     return MealieBringAPI()
 
 
-def test_process_webhook(mealie_app, mock_event_loop, mock_bring_handler, example_request):
-    mock_request = MagicMock()
-    mock_request.get_json.return_value = example_request
-    mock_request.remote_addr = "127.0.0.1"
-
-    result = mealie_app.process_webhook(mock_request)
-
-    mock_request.get_json.assert_called_once()
-    mock_bring_handler.add_items.assert_called_once()
-    mock_bring_handler.notify_users_about_changes_in_list.assert_called_once()
-    assert result == "OK"
-
-
 def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = False
 
@@ -107,3 +94,19 @@ def test_process_recipe_data_with_household_ingredient(mealie_app, example_reque
             mealie_app.process_recipe_data(example_request)
 
             assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"]) - 1
+
+
+def test_add_ingredients_to_bring_empty_list(mealie_app):
+    mealie_app._add_ingredients_to_bring([])
+
+    mealie_app.bring_handler.add_items.assert_not_called()
+    mealie_app.bring_handler.notify_users_about_changes_in_list.assert_not_called()
+
+
+def test_add_ingredients_to_bring_with_ingredients(mealie_app, first_ingredient, second_ingredient):
+    ingredients = [first_ingredient, second_ingredient]
+
+    mealie_app._add_ingredients_to_bring(ingredients)
+
+    mealie_app.bring_handler.add_items.assert_called_once_with(ingredients)
+    mealie_app.bring_handler.notify_users_about_changes_in_list.assert_called_once()
