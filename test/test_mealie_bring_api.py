@@ -1,19 +1,10 @@
 import asyncio
-import logging
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from source.bring_handler import BringHandler
-from source.logger_mixin import LoggerMixin
 from source.mealie_bring_api import Flask, MealieBringAPI
-
-
-@pytest.fixture
-def mock_logger():
-    logger = MagicMock(spec=LoggerMixin)
-    logger.log = MagicMock(spec=logging.Logger)
-    return logger
 
 
 @pytest.fixture

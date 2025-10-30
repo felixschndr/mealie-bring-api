@@ -1,6 +1,17 @@
+import logging
+from unittest.mock import MagicMock
+
 import pytest
 
 from source.ingredient import Ingredient
+from source.logger_mixin import LoggerMixin
+
+
+@pytest.fixture
+def mock_logger() -> MagicMock:
+    logger = MagicMock(spec=LoggerMixin)
+    logger.log = MagicMock(spec=logging.Logger)
+    return logger
 
 
 @pytest.fixture
