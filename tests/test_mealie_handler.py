@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
-
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.mealie_handler import MealieHandler
 

@@ -2,7 +2,6 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from source.bring_handler import BringHandler
 from source.mealie_bring_api import Flask, MealieBringAPI
 

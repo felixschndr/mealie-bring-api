@@ -1,5 +1,4 @@
 import pytest
-
 from source.environment_variable_getter import EnvironmentVariableGetter
 
 

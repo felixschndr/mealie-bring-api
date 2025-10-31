@@ -14,3 +14,7 @@ requests = "^2.32.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "tests"]
