@@ -25,7 +25,25 @@ def food_name_plural() -> str:
 
 
 @pytest.fixture
-def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str) -> dict:
+def unit() -> dict:
+    return {
+        "abbreviation": "g",
+        "aliases": [],
+        "created_at": "2025-07-16T19:36:59.820124+00:00",
+        "description": "",
+        "extras": {},
+        "fraction": True,
+        "id": "e98b35ec-b9e1-4c2d-a81f-274167acad98",
+        "name": "Gram",
+        "plural_abbreviation": "g",
+        "plural_name": "Grams",
+        "updated_at": "2025-07-16T19:36:59.820130+00:00",
+        "use_abbreviation": False,
+    }
+
+
+@pytest.fixture
+def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str, unit: dict) -> dict:
     return {
         "display": f"1 gram {food_name_singular}",
         "food": {
@@ -51,20 +69,7 @@ def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str) -> 
         "quantity": 1.0,
         "reference_id": "4e6da2ee-782a-4e1d-b520-3a3f7ac0423e",
         "title": "",
-        "unit": {
-            "abbreviation": "g",
-            "aliases": [],
-            "created_at": "2025-07-16T19:36:59.820124+00:00",
-            "description": "",
-            "extras": {},
-            "fraction": True,
-            "id": "e98b35ec-b9e1-4c2d-a81f-274167acad98",
-            "name": "Gram",
-            "plural_abbreviation": "g",
-            "plural_name": "Grams",
-            "updated_at": "2025-07-16T19:36:59.820130+00:00",
-            "use_abbreviation": False,
-        },
+        "unit": unit,
     }
 
 
