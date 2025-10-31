@@ -3,7 +3,6 @@ import logging
 from typing import Union
 
 from flask import Blueprint, Flask, request
-
 from source.bring_handler import BringHandler
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.ingredient import Ingredient, IngredientWithAmountsDisabled

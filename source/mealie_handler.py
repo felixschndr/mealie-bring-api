@@ -1,7 +1,6 @@
 import sys
 
 import requests
-
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.logger_mixin import LoggerMixin
 

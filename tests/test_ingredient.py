@@ -1,5 +1,4 @@
 import pytest
-
 from source.ingredient import (
     Ingredient,
     IngredientWithAmountsDisabled,

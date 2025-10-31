@@ -2,7 +2,6 @@ import logging
 from unittest.mock import MagicMock
 
 import pytest
-
 from source.ingredient import Ingredient
 from source.logger_mixin import LoggerMixin
 
