@@ -49,7 +49,7 @@ class Ingredient:
             return raw_data["display"].capitalize()
 
         food = raw_data["food"]
-        plural_name = food.get("plural_name") or food.get("pluralName")
+        plural_name = get_value_of_dict_with_different_naming_conventions(food, "plural_name")
         if not quantity.is_one and plural_name:
             return plural_name.capitalize()
         return food["name"].capitalize()
@@ -73,14 +73,14 @@ class Ingredient:
         if unit_raw is None:
             return ""
 
-        use_abbreviation = unit_raw.get("use_abbreviation") or unit_raw.get("useAbbreviation")
+        use_abbreviation = get_value_of_dict_with_different_naming_conventions(unit_raw, "use_abbreviation")
         if not quantity.is_one:
             # The API of Mealie has different naming conventions depending on the endpoint
-            plural_abbreviation = unit_raw.get("plural_abbreviation") or unit_raw.get("pluralAbbreviation")
+            plural_abbreviation = get_value_of_dict_with_different_naming_conventions(unit_raw, "plural_abbreviation")
             if plural_abbreviation and use_abbreviation:
                 return plural_abbreviation
 
-            plural_name = unit_raw.get("plural_name") or unit_raw.get("pluralName")
+            plural_name = get_value_of_dict_with_different_naming_conventions(unit_raw, "plural_name")
             if plural_name:
                 # For None quantity case, don't add a leading space if formatted is empty
                 prefix = " " if quantity.formatted else ""
@@ -120,3 +120,9 @@ class IngredientWithAmountsDisabled(Ingredient):
     def from_raw_data(raw_data: dict, _recipe_scale: float = 1.0) -> Ingredient:
         """Create an ingredient with amounts disabled from raw data."""
         return IngredientWithAmountsDisabled(name=raw_data["display"])
+
+
+def get_value_of_dict_with_different_naming_conventions(input_dict: dict, key: str) -> str:
+    key_parts = key.split("_")
+    key_as_camel_case = key_parts[0] + "".join(key_part.capitalize() for key_part in key_parts[1:])
+    return input_dict.get(key) or input_dict.get(key_as_camel_case)

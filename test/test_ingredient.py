@@ -1,6 +1,10 @@
 import pytest
 
-from source.ingredient import Ingredient, IngredientWithAmountsDisabled
+from source.ingredient import (
+    Ingredient,
+    IngredientWithAmountsDisabled,
+    get_value_of_dict_with_different_naming_conventions,
+)
 
 
 @pytest.fixture
@@ -172,3 +176,16 @@ def test_to_dict(food_name_singular):
     assert result["itemId"] == food_name_singular
     assert result["spec"] == "1 Gram"
     assert isinstance(result["uuid"], str)
+
+
+@pytest.mark.parametrize(
+    "input_dict, key, expected_value",
+    [
+        ({"this_is_a_key": "value"}, "this_is_a_key", "value"),
+        ({"thisIsAKey": "value"}, "this_is_a_key", "value"),
+        ({"other_key": "value"}, "this_is_a_key", None),
+    ],
+)
+def test_get_value_of_dict_with_different_naming_conventions(input_dict, key, expected_value):
+    result = get_value_of_dict_with_different_naming_conventions(input_dict, key)
+    assert result == expected_value
