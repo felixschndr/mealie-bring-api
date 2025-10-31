@@ -72,6 +72,35 @@ def ingredient_raw_data_with_disabled_amounts(
     }
 
 
+@pytest.fixture
+def ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero(food_name_plural) -> dict:
+    return {
+        "checked": False,
+        "display": food_name_plural,
+        "food": None,
+        "note": food_name_plural,
+        "quantity": 0,
+        "unit": None,
+    }
+
+
+@pytest.fixture
+def ingredient_from_shopping_list_with_no_food_with_quantity(
+    ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero,
+) -> dict:
+    ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero["quantity"] = 5
+    return ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero
+
+
+@pytest.fixture
+def ingredient_from_shopping_list_with_no_food_with_quantity_and_with_unit(
+    ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero, unit
+) -> dict:
+    ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero["quantity"] = 5
+    ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero["unit"] = unit
+    return ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero
+
+
 @pytest.mark.parametrize(
     argnames="ingredient_input, recipe_scale, expected_name, expected_specification",
     argvalues=[
@@ -81,39 +110,19 @@ def ingredient_raw_data_with_disabled_amounts(
         ("ingredient_raw_base_data", 2, "food_name_plural", "2 Grams"),
         ("ingredient_raw_data_with_higher_quantity", 1, "food_name_plural", "2 Grams"),
         # Unit abbreviation cases
-        (
-            "ingredient_raw_data_with_unit_abbreviation_instead_of_name",
-            1,
-            "food_name_singular",
-            "1g",
-        ),
-        (
-            "ingredient_raw_data_with_unit_abbreviation_instead_of_name_and_higher_quantity",
-            1,
-            "food_name_plural",
-            "2g",
-        ),
+        ("ingredient_raw_data_with_unit_abbreviation_instead_of_name", 1, "food_name_singular", "1g"),
+        ("ingredient_raw_data_with_unit_abbreviation_instead_of_name_and_higher_quantity", 1, "food_name_plural", "2g"),
         # Note case
-        (
-            "ingredient_raw_data_with_note",
-            1,
-            "food_name_singular",
-            "1 Gram (test note)",
-        ),
+        ("ingredient_raw_data_with_note", 1, "food_name_singular", "1 Gram (test note)"),
         # None quantity case
-        (
-            "ingredient_raw_data_with_none_quantity",
-            1,
-            "food_name_plural",  # When quantity is None, is_one is False, so plural is used
-            "Grams",  # Even with None quantity, the unit is still included
-        ),
+        # When quantity is None, is_one is False, so plural is used, even with None quantity, the unit is still included
+        ("ingredient_raw_data_with_none_quantity", 1, "food_name_plural", "Grams"),
         # None unit case
-        (
-            "ingredient_raw_data_with_none_unit",
-            1,
-            "food_name_singular",
-            "1",
-        ),
+        ("ingredient_raw_data_with_none_unit", 1, "food_name_singular", "1"),
+        # Ingredients manually entered into the shopping list have no food attached
+        ("ingredient_from_shopping_list_with_no_food_with_quantity_set_to_zero", 1, "food_name_plural", ""),
+        ("ingredient_from_shopping_list_with_no_food_with_quantity", 1, "food_name_plural", "5"),
+        ("ingredient_from_shopping_list_with_no_food_with_quantity_and_with_unit", 1, "food_name_plural", "5 Grams"),
     ],
 )
 def test_parse_ingredient(ingredient_input, recipe_scale, expected_name, expected_specification, request):
@@ -129,7 +138,7 @@ def test_parse_ingredient(ingredient_input, recipe_scale, expected_name, expecte
 
 @pytest.mark.parametrize(
     argnames="recipe_scale",
-    argvalues=[1.0, 1.5, 2.0],
+    argvalues=[0, 1.0, 1.5, 2.0],
 )
 def test_ingredient_with_amounts_disabled(
     ingredient_raw_data_with_disabled_amounts,

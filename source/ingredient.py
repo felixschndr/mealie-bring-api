@@ -22,7 +22,7 @@ class Quantity:
 
     @property
     def formatted(self) -> str:
-        if self.scaled_value is None:
+        if self.scaled_value is None or self.scaled_value == 0:
             return ""
         # Convert to integer if it's a whole number
         value = int(self.scaled_value) if self.scaled_value.is_integer() else self.scaled_value
@@ -45,9 +45,13 @@ class Ingredient:
 
     @staticmethod
     def _get_name(raw_data: dict, quantity: Quantity) -> str:
+        if raw_data["food"] is None:
+            return raw_data["display"].capitalize()
+
         food = raw_data["food"]
-        if not quantity.is_one and food.get("plural_name"):
-            return food["plural_name"].capitalize()
+        plural_name = food.get("plural_name") or food.get("pluralName")
+        if not quantity.is_one and plural_name:
+            return plural_name.capitalize()
         return food["name"].capitalize()
 
     @staticmethod
@@ -91,7 +95,7 @@ class Ingredient:
 
     @staticmethod
     def _get_note(raw_data: dict) -> str:
-        if not raw_data["note"]:
+        if not raw_data["note"] or not raw_data["food"]:
             return ""
 
         return f"({raw_data['note']})"
