@@ -59,7 +59,9 @@ class MealieBringAPI:
 
             self.logger.log.info("Moving ingredients from shopping list to Bring")
 
-            self._add_ingredients_to_bring(self.mealie_handler.get_ingredients_from_shopping_list())
+            items_on_shopping_list = self.mealie_handler.get_items_on_shopping_list()
+            self._add_ingredients_to_bring([Ingredient.from_raw_data(item) for item in items_on_shopping_list])
+            self.mealie_handler.delete_items_from_shopping_list(items_on_shopping_list)
 
             return "OK"
 

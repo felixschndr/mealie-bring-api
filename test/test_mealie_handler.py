@@ -5,7 +5,6 @@ import pytest
 import requests
 
 from source.environment_variable_getter import EnvironmentVariableGetter
-from source.ingredient import Ingredient
 from source.mealie_handler import MealieHandler
 
 
@@ -165,7 +164,7 @@ def test_try_api_key_failure(mock_env_getter, mock_response, mock_logger):
             mock_exit.assert_called_once_with(1)
 
 
-def test_get_ingredients_from_shopping_list_with_uuid(mealie_handler, mock_requests):
+def test_get_items_on_shopping_list_with_uuid(mealie_handler, mock_requests):
     mock_get, _ = mock_requests
     mock_response = mock_get.return_value
     mock_response.json.return_value = {
@@ -175,21 +174,19 @@ def test_get_ingredients_from_shopping_list_with_uuid(mealie_handler, mock_reque
         ]
     }
 
-    with patch.object(mealie_handler, "_delete_items_from_shopping_list") as mock_delete:
-        with patch.object(Ingredient, "from_raw_data", return_value=MagicMock(spec=Ingredient)) as mock_from_raw_data:
-            result = mealie_handler.get_ingredients_from_shopping_list()
+    result = mealie_handler.get_items_on_shopping_list()
 
-            mock_get.assert_called_once_with(
-                f"{mealie_handler.mealie_base_url}/api/households/shopping/items?perPage=-1",
-                headers={"Authorization": f"Bearer {mealie_handler.mealie_api_key}"},
-                timeout=20,
-            )
-            mock_delete.assert_called_once_with(["item1"])
-            assert mock_from_raw_data.call_count == 1
-            assert len(result) == 1
+    mock_get.assert_called_once_with(
+        f"{mealie_handler.mealie_base_url}/api/households/shopping/items?perPage=-1",
+        headers={"Authorization": f"Bearer {mealie_handler.mealie_api_key}"},
+        timeout=20,
+    )
+    assert len(result) == 1
+    assert result[0]["id"] == "item1"
+    assert result[0]["shoppingListId"] == "test_uuid"
 
 
-def test_get_ingredients_from_shopping_list_without_uuid(mealie_handler, mock_requests):
+def test_get_items_on_shopping_list_without_uuid(mealie_handler, mock_requests):
     mealie_handler.shopping_list_uuid = ""
     mock_get, _ = mock_requests
     mock_response = mock_get.return_value
@@ -200,31 +197,33 @@ def test_get_ingredients_from_shopping_list_without_uuid(mealie_handler, mock_re
         ]
     }
 
-    with patch.object(mealie_handler, "_delete_items_from_shopping_list") as mock_delete:
-        with patch.object(Ingredient, "from_raw_data", return_value=MagicMock(spec=Ingredient)) as mock_from_raw_data:
-            result = mealie_handler.get_ingredients_from_shopping_list()
+    result = mealie_handler.get_items_on_shopping_list()
 
-            mock_get.assert_called_once_with(
-                f"{mealie_handler.mealie_base_url}/api/households/shopping/items?perPage=-1",
-                headers={"Authorization": f"Bearer {mealie_handler.mealie_api_key}"},
-                timeout=20,
-            )
-            mock_delete.assert_called_once_with(["item1", "item2"])
-            assert mock_from_raw_data.call_count == 2
-            assert len(result) == 2
+    mock_get.assert_called_once_with(
+        f"{mealie_handler.mealie_base_url}/api/households/shopping/items?perPage=-1",
+        headers={"Authorization": f"Bearer {mealie_handler.mealie_api_key}"},
+        timeout=20,
+    )
+    assert len(result) == 2
+    assert result[0]["id"] == "item1"
+    assert result[1]["id"] == "item2"
 
 
 def test_delete_items_from_shopping_list(mealie_handler, mock_requests):
     _, mock_delete = mock_requests
-    item_ids = ["item1", "item2", "item3"]
+    items_on_shopping_list = [
+        {"id": "item1", "shoppingListId": "uuid1", "display": "1 gram Berry"},
+        {"id": "item2", "shoppingListId": "uuid2", "display": "2 grams Apple"},
+        {"id": "item3", "shoppingListId": "uuid3", "display": "3 grams Orange"},
+    ]
 
-    mealie_handler._delete_items_from_shopping_list(item_ids)
+    mealie_handler.delete_items_from_shopping_list(items_on_shopping_list)
 
     assert mock_delete.call_count == 3
-    for i, item_id in enumerate(item_ids):
+    for i, item in enumerate(items_on_shopping_list):
         assert (
             mock_delete.call_args_list[i][1]["url"]
-            == f"{mealie_handler.mealie_base_url}/api/households/shopping/items?ids={item_id}"
+            == f"{mealie_handler.mealie_base_url}/api/households/shopping/items?ids={item['id']}"
         )
         assert mock_delete.call_args_list[i][1]["headers"] == {
             "Authorization": f"Bearer {mealie_handler.mealie_api_key}"

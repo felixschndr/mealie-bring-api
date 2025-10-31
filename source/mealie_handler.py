@@ -3,7 +3,6 @@ import sys
 import requests
 
 from source.environment_variable_getter import EnvironmentVariableGetter
-from source.ingredient import Ingredient
 from source.logger_mixin import LoggerMixin
 
 
@@ -46,8 +45,8 @@ class MealieHandler(LoggerMixin):
             self.log.critical("Invalid Mealie URL or API key!")
             sys.exit(1)
 
-    def get_ingredients_from_shopping_list(self) -> list[Ingredient]:
-        self.log.debug("Getting ingredients from shopping list")
+    def get_items_on_shopping_list(self) -> list[dict]:
+        self.log.debug("Getting items from shopping list")
         response = requests.get(
             f"{self.mealie_base_url}/api/households/shopping/items?perPage=-1",
             headers={"Authorization": f"Bearer {self.mealie_api_key}"},
@@ -55,18 +54,17 @@ class MealieHandler(LoggerMixin):
         )
         response.raise_for_status()
 
-        items_of_shopping_list = response.json()["items"]
+        items_on_shopping_list = response.json()["items"]
 
         if self.shopping_list_uuid:
-            items_of_shopping_list = [
-                item for item in items_of_shopping_list if item["shoppingListId"] == self.shopping_list_uuid
+            items_on_shopping_list = [
+                item for item in items_on_shopping_list if item["shoppingListId"] == self.shopping_list_uuid
             ]
 
-        self._delete_items_from_shopping_list([item["id"] for item in items_of_shopping_list])
+        return items_on_shopping_list
 
-        return [Ingredient.from_raw_data(item) for item in items_of_shopping_list]
-
-    def _delete_items_from_shopping_list(self, item_ids: list[str]) -> None:
+    def delete_items_from_shopping_list(self, items_on_shopping_list: list[dict]) -> None:
+        item_ids = [item["id"] for item in items_on_shopping_list]
         self.log.debug(f"Deleting {len(item_ids)} items from shopping list")
         for item_id in item_ids:
             response = requests.delete(
