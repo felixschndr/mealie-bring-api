@@ -1,12 +1,9 @@
-name: CI/CD Pipeline
+name: Pipeline that validates and tests the source code
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
-
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
-  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   pre-commit:
@@ -74,47 +71,3 @@ jobs:
             echo "Actual output: $output"
             exit 1
           fi
-
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    needs: [pre-commit, test, validate-docker-image]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          platforms: ${{ env.PLATFORMS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push Docker image as latest
-        if: github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          platforms: ${{ env.PLATFORMS }}
-          tags: ${{ steps.meta.outputs.tags }},${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
