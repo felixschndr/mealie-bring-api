@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'pyproject.toml'
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -45,7 +47,7 @@ jobs:
 
   build-and-push-image:
     runs-on: ubuntu-latest
-    needs: [check_version]
+    needs: [ check_version ]
     # Always build for PRs, but only build on main if version changed
     if: github.ref != 'refs/heads/main' || needs.check_version.outputs.version_changed == 'true'
     steps:
