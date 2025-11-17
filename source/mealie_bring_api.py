@@ -85,20 +85,33 @@ class MealieBringAPI:
         recipe_scale = data.get("recipe_scale", 1)
         self.logger.log.debug(f"Recipe scale is {recipe_scale}")
 
-        ingredients_to_add = []
-        for ingredient_raw_data in data["content"]["recipe_ingredient"]:
+        unparsed_ingredients = self._extract_ingredients_data_from_recipe_data(data["content"]["recipe_ingredient"])
+
+        parsed_ingredients_to_add = []
+        for ingredient_raw_data in unparsed_ingredients:
             self.logger.log.debug(f"Parsing ingredient {ingredient_raw_data}")
             if not enable_amount or ingredient_raw_data["food"] is None:
-                # The second case happens if the data is only in the note and the food is not properly set
+                # The second case happens if the data is only in the note and the food is not properly set,
                 # This often is the case when a recipe is imported from some source and not properly formatted yet
-                ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
+                parsed_ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
             else:
                 if Ingredient.in_household(ingredient_raw_data):
                     self.logger.log.info(f"Ignoring ingredient {ingredient_raw_data['food']['name']}")
                     continue
-                ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data, recipe_scale))
+                parsed_ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data, recipe_scale))
 
-        return ingredients_to_add
+        return parsed_ingredients_to_add
+
+    def _extract_ingredients_data_from_recipe_data(self, recipe_ingredients: list[dict]) -> list[dict]:
+        unparsed_ingredients = []
+        for ingredient_of_recipe in recipe_ingredients:
+            if referenced_recipe := ingredient_of_recipe.get("referenced_recipe", None):
+                self.logger.log.debug(f"Ingredient is a recipe: {referenced_recipe['name']}")
+                for ingredient_of_referenced_recipe in referenced_recipe["recipe_ingredient"]:
+                    unparsed_ingredients.append(ingredient_of_referenced_recipe)
+            else:
+                unparsed_ingredients.append(ingredient_of_recipe)
+        return unparsed_ingredients
 
     def _add_ingredients_to_bring(self, ingredients_to_add: list[Ingredient]) -> None:
         if not ingredients_to_add:
