@@ -69,8 +69,6 @@ def ingredient_raw_data_with_disabled_amounts(
         "note": ingredient_with_disabled_amounts_display,
         "original_text": None,
         "quantity": 1.0,
-        "reference_id": "8ea582b8-1518-4089-9f1a-f3540a83b6e7",
-        "title": None,
         "unit": None,
     }
 
