@@ -73,7 +73,7 @@ def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str, uni
 
 
 @pytest.fixture
-def example_request(ingredient_raw_base_data: dict) -> dict:
+def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
     return {
         "action": {
             "action_type": "post",
@@ -180,6 +180,71 @@ def example_request(ingredient_raw_base_data: dict) -> dict:
                     "title": "",
                     "original_text": None,
                     "reference_id": "4c6d2fd3-a3c7-443c-a91b-036fffc59c66",
+                },
+                {
+                    "display": 4,
+                    "food": None,
+                    "note": "",
+                    "quantity": 4.0,
+                    "reference_id": "69dd2bb2-4104-44f7-968e-6c21cdc53022",
+                    "referenced_recipe": {
+                        "assets": [],
+                        "id": "0e5e81e3-1d5d-4a85-b919-3596feaa9d77",
+                        "user_id": "7ceccf57-1fec-4f5d-afbd-f83b842fbcc1",
+                        "household_id": "7d54749a-6326-4051-b369-445353bb6678",
+                        "group_id": "2ffe1805-0cea-4b4b-bbe2-352675312ef5",
+                        "name": "Test Recipe 2",
+                        "slug": "test-recipe-2",
+                        "recipe_ingredient": [
+                            {
+                                "display": "1 gram Pepper",
+                                "food": {
+                                    "aliases": [],
+                                    "created_at": "2025-07-16T19:37:10.688281+00:00",
+                                    "description": "",
+                                    "extras": {},
+                                    "households_with_ingredient_food": [],
+                                    "id": "00ba16f1-5d1e-4c2a-8a69-91e6af493cb4",
+                                    "label_id": "e4cedfe5-523d-4c93-93a2-644de17bdc74",
+                                    "name": "Pepper",
+                                    "plural_name": "Pepper",
+                                    "updated_at": "2025-07-16T19:37:10.688286+00:00",
+                                },
+                                "note": "",
+                                "original_text": None,
+                                "quantity": 1.0,
+                                "reference_id": "4e6da2ee-782a-4e1d-b520-3a3f7ac0423e",
+                                "title": "",
+                                "unit": unit,
+                            },
+                            {
+                                "display": "15 Liters Water",
+                                "food": {
+                                    "aliases": [],
+                                    "created_at": "2025-07-16T19:37:10.688281+00:00",
+                                    "description": "",
+                                    "extras": {},
+                                    "households_with_ingredient_food": [],
+                                    "id": "00ba16f1-5d1e-4c2a-8a69-91e6af493cb4",
+                                    "label_id": "e4cedfe5-523d-4c93-93a2-644de17bdc74",
+                                    "name": "Water",
+                                    "plural_name": "Water",
+                                    "updated_at": "2025-07-16T19:37:10.688286+00:00",
+                                },
+                                "note": "",
+                                "original_text": None,
+                                "quantity": 1.0,
+                                "reference_id": "4e6da2ee-782a-4e1d-b520-3a3f7ac0423e",
+                                "title": "",
+                                "unit": unit,
+                            }
+                        ],
+                        "recipe_servings": 1.0,
+                        "recipe_yield": None,
+                        "recipe_yield_quantity": 0.0,
+                    },
+                    "title": "",
+                    "unit": None,
                 },
             ],
             "recipe_instructions": [

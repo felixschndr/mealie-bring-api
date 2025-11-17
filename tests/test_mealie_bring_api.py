@@ -47,16 +47,18 @@ def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
             with patch(
                 "source.mealie_bring_api.IngredientWithAmountsDisabled.from_raw_data"
             ) as mock_disabled_from_raw_data:
-                result = mealie_app.process_recipe_data(example_request)
-
+                unparsed_ingredients = mealie_app._extract_ingredients_data_from_recipe_data(
+                    example_request["content"]["recipe_ingredient"]
+                )
                 expected_ingredient_calls = 0
                 expected_disabled_calls = 0
-
-                for ingredient in example_request["content"]["recipe_ingredient"]:
-                    if ingredient["food"] is None:
+                for ingredient in unparsed_ingredients:
+                    if ingredient.get("food") is None:
                         expected_disabled_calls += 1
                     else:
                         expected_ingredient_calls += 1
+
+                result = mealie_app.process_recipe_data(example_request)
 
                 assert mock_from_raw_data.call_count == expected_ingredient_calls
                 assert mock_disabled_from_raw_data.call_count == expected_disabled_calls
@@ -67,23 +69,33 @@ def test_process_recipe_data_with_disabled_amount(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = True
 
     with patch("source.mealie_bring_api.IngredientWithAmountsDisabled.from_raw_data") as mock_from_raw_data:
+        unparsed_ingredients = mealie_app._extract_ingredients_data_from_recipe_data(
+            example_request["content"]["recipe_ingredient"]
+        )
+
         result = mealie_app.process_recipe_data(example_request)
 
-        assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"])
+        assert mock_from_raw_data.call_count == len(unparsed_ingredients)
         assert len(result) == mock_from_raw_data.call_count
 
 
 def test_process_recipe_data_with_household_ingredient(mealie_app, example_request):
     example_request["content"]["settings"]["disable_amount"] = False
 
+    unparsed_ingredients_ = mealie_app._extract_ingredients_data_from_recipe_data(
+        example_request["content"]["recipe_ingredient"]
+    )
+    target_ingredient = unparsed_ingredients_[0]
+
     def mock_in_household(ingredient_data):
-        return ingredient_data == example_request["content"]["recipe_ingredient"][0]
+        return ingredient_data == target_ingredient
 
     with patch("source.mealie_bring_api.Ingredient.in_household", side_effect=mock_in_household):
         with patch("source.mealie_bring_api.Ingredient.from_raw_data") as mock_from_raw_data:
             mealie_app.process_recipe_data(example_request)
 
-            assert mock_from_raw_data.call_count == len(example_request["content"]["recipe_ingredient"]) - 1
+            expected_total_with_amount = len([i for i in unparsed_ingredients_ if i.get("food") is not None])
+            assert mock_from_raw_data.call_count == expected_total_with_amount - 1
 
 
 def test_add_ingredients_to_bring_empty_list(mealie_app):
