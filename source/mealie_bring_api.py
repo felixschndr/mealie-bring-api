@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import logging
 from typing import Union
 
@@ -107,8 +108,12 @@ class MealieBringAPI:
         for ingredient_of_recipe in recipe_ingredients:
             if referenced_recipe := ingredient_of_recipe.get("referenced_recipe", None):
                 self.logger.log.debug(f"Ingredient is a recipe: {referenced_recipe['name']}")
+                parent_quantity = ingredient_of_recipe.get("quantity", 1.0)
                 for ingredient_of_referenced_recipe in referenced_recipe["recipe_ingredient"]:
-                    unparsed_ingredients.append(ingredient_of_referenced_recipe)
+                    ingredient_copy = copy.deepcopy(ingredient_of_referenced_recipe)
+                    if isinstance(ingredient_copy.get("quantity"), (int, float)):
+                        ingredient_copy["quantity"] = ingredient_copy["quantity"] * parent_quantity
+                    unparsed_ingredients.append(ingredient_copy)
             else:
                 unparsed_ingredients.append(ingredient_of_recipe)
         return unparsed_ingredients
