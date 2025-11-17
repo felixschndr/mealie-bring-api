@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from source.bring_handler import BringHandler
+from source.ingredient import Ingredient
 from source.mealie_bring_api import Flask, MealieBringAPI
 
 
@@ -40,29 +41,21 @@ def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mo
 
 
 def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
-    example_request["content"]["settings"]["disable_amount"] = False
+    def __eq__(self, other):
+        return self.name == other.name and self.specification == other.specification
 
-    with patch("source.mealie_bring_api.Ingredient.in_household", return_value=False):
-        with patch("source.mealie_bring_api.Ingredient.from_raw_data") as mock_from_raw_data:
-            with patch(
-                "source.mealie_bring_api.IngredientWithAmountsDisabled.from_raw_data"
-            ) as mock_disabled_from_raw_data:
-                unparsed_ingredients = mealie_app._extract_ingredients_data_from_recipe_data(
-                    example_request["content"]["recipe_ingredient"]
-                )
-                expected_ingredient_calls = 0
-                expected_disabled_calls = 0
-                for ingredient in unparsed_ingredients:
-                    if ingredient.get("food") is None:
-                        expected_disabled_calls += 1
-                    else:
-                        expected_ingredient_calls += 1
+    Ingredient.__eq__ = __eq__
+    expected_ingredients = [
+        Ingredient(name="Berry", specification="1 Gram"),
+        Ingredient(name="Apple", specification="1"),
+        Ingredient(name="Salt", specification="5 Spoons"),
+        Ingredient(name="Pepper", specification="4 Grams"),
+        Ingredient(name="Water", specification="6 Liters"),
+    ]
 
-                result = mealie_app.process_recipe_data(example_request)
+    result = mealie_app.process_recipe_data(example_request)
 
-                assert mock_from_raw_data.call_count == expected_ingredient_calls
-                assert mock_disabled_from_raw_data.call_count == expected_disabled_calls
-                assert len(result) == mock_from_raw_data.call_count + mock_disabled_from_raw_data.call_count
+    assert result == expected_ingredients
 
 
 def test_process_recipe_data_with_disabled_amount(mealie_app, example_request):
@@ -80,8 +73,6 @@ def test_process_recipe_data_with_disabled_amount(mealie_app, example_request):
 
 
 def test_process_recipe_data_with_household_ingredient(mealie_app, example_request):
-    example_request["content"]["settings"]["disable_amount"] = False
-
     unparsed_ingredients_ = mealie_app._extract_ingredients_data_from_recipe_data(
         example_request["content"]["recipe_ingredient"]
     )

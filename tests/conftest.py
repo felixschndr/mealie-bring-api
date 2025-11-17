@@ -27,7 +27,6 @@ def food_name_plural() -> str:
 def unit() -> dict:
     return {
         "abbreviation": "g",
-        "description": "",
         "name": "Gram",
         "plural_abbreviation": "g",
         "plural_name": "Grams",
@@ -101,15 +100,21 @@ def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
                                 "unit": unit,
                             },
                             {
-                                "display": "15 Liters Water",
+                                "display": "1.5 Liters Water",
                                 "food": {
                                     "name": "Water",
                                     "plural_name": "Water",
                                 },
                                 "note": "",
-                                "quantity": 1.0,
+                                "quantity": 1.5,
                                 "title": "",
-                                "unit": unit,
+                                "unit": {
+                                    "abbreviation": "l",
+                                    "name": "Liter",
+                                    "plural_abbreviation": "",
+                                    "plural_name": "Liters",
+                                    "use_abbreviation": False,
+                                },
                             },
                         ],
                         "recipe_servings": 1.0,
