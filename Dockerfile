@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.14-alpine
 
 LABEL org.opencontainers.image.source="https://github.com/felixschndr/mealie-bring-api"
 LABEL org.opencontainers.image.description="The container image of the mealie bring api integration (https://github.com/felixschndr/mealie-bring-api)"
@@ -15,4 +15,4 @@ RUN pip install poetry && \
     POETRY_VIRTUALENVS_CREATE=false poetry install && \
     pip uninstall -y poetry
 
-CMD python -m source.mealie_bring_api
+CMD ["python", "-m", "source.mealie_bring_api"]
