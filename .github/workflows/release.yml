@@ -128,7 +128,9 @@ jobs:
           tag_name: ${{ needs.check_version.outputs.current_version }}
           name: Release ${{ needs.check_version.outputs.current_version }}
           body: |
-            ## Changes since the last release
+            If you like the project, please consider giving it a star on GitHub, thank you very much! ⭐
+
+            ## Commits since the last release
             ${{ env.commit_log }}
           generate_release_notes: true
         env:
