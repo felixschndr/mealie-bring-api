@@ -104,19 +104,21 @@ class MealieBringAPI:
         return parsed_ingredients_to_add
 
     def _extract_ingredients_data_from_recipe_data(self, recipe_ingredients: list[dict]) -> list[dict]:
-        unparsed_ingredients = []
-        for ingredient_of_recipe in recipe_ingredients:
-            if referenced_recipe := ingredient_of_recipe.get("referenced_recipe", None):
-                self.logger.log.debug(f"Ingredient is a recipe: {referenced_recipe['name']}")
-                parent_quantity = ingredient_of_recipe.get("quantity", 1.0)
-                for ingredient_of_referenced_recipe in referenced_recipe["recipe_ingredient"]:
-                    ingredient_copy = copy.deepcopy(ingredient_of_referenced_recipe)
-                    if isinstance(ingredient_copy.get("quantity"), (int, float)):
-                        ingredient_copy["quantity"] = ingredient_copy["quantity"] * parent_quantity
-                    unparsed_ingredients.append(ingredient_copy)
-            else:
-                unparsed_ingredients.append(ingredient_of_recipe)
-        return unparsed_ingredients
+        def flatten(ingredients: list[dict], multiplier: float) -> list[dict]:
+            result = []
+            for ingredient in ingredients:
+
+                if referenced_recipe := ingredient.get("referenced_recipe"):
+                    self.logger.log.debug(f"Ingredient is a recipe: {referenced_recipe["name"]}")
+                    result.extend(
+                        flatten(referenced_recipe["recipe_ingredient"], multiplier * ingredient.get("quantity", 1.0)))
+                else:
+                    ingredient_copy = copy.deepcopy(ingredient)
+                    ingredient_copy["quantity"] *= multiplier
+                    result.append(ingredient_copy)
+            return result
+
+        return flatten(recipe_ingredients, 1.0)
 
     def _add_ingredients_to_bring(self, ingredients_to_add: list[Ingredient]) -> None:
         if not ingredients_to_add:

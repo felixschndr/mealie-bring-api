@@ -51,6 +51,7 @@ def test_process_recipe_data_with_enabled_amount(mealie_app, example_request):
         Ingredient(name="Salt", specification="5 Spoons"),
         Ingredient(name="Pepper", specification="4 Grams"),
         Ingredient(name="Water", specification="6 Liters"),
+        Ingredient(name="Sugar", specification="2 Kilograms"),
     ]
 
     result = mealie_app.process_recipe_data(example_request)
