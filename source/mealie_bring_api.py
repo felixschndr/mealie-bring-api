@@ -94,12 +94,18 @@ class MealieBringAPI:
             if not enable_amount or ingredient_raw_data["food"] is None:
                 # The second case happens if the data is only in the note and the food is not properly set,
                 # This often is the case when a recipe is imported from some source and not properly formatted yet
-                parsed_ingredients_to_add.append(IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data))
+                parsed_ingredient = IngredientWithAmountsDisabled.from_raw_data(ingredient_raw_data)
             else:
                 if Ingredient.in_household(ingredient_raw_data):
                     self.logger.log.info(f"Ignoring ingredient {ingredient_raw_data['food']['name']}")
                     continue
-                parsed_ingredients_to_add.append(Ingredient.from_raw_data(ingredient_raw_data, recipe_scale))
+                parsed_ingredient = Ingredient.from_raw_data(ingredient_raw_data, recipe_scale)
+
+            if parsed_ingredient.name == "" and parsed_ingredient.specification is None:
+                self.logger.log.warning(f"Ignoring empty ingredient {ingredient_raw_data}")
+                continue
+
+            parsed_ingredients_to_add.append(parsed_ingredient)
 
         return parsed_ingredients_to_add
 
@@ -111,7 +117,8 @@ class MealieBringAPI:
                 if referenced_recipe := ingredient.get("referenced_recipe"):
                     self.logger.log.debug(f"Ingredient is a recipe: {referenced_recipe["name"]}")
                     result.extend(
-                        flatten(referenced_recipe["recipe_ingredient"], multiplier * ingredient.get("quantity", 1.0)))
+                        flatten(referenced_recipe["recipe_ingredient"], multiplier * ingredient.get("quantity", 1.0))
+                    )
                 else:
                     ingredient_copy = copy.deepcopy(ingredient)
                     ingredient_copy["quantity"] *= multiplier

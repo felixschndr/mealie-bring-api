@@ -1,4 +1,5 @@
 import asyncio
+import copy
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -88,6 +89,24 @@ def test_process_recipe_data_with_household_ingredient(mealie_app, example_reque
 
             expected_total_with_amount = len([i for i in unparsed_ingredients_ if i.get("food") is not None])
             assert mock_from_raw_data.call_count == expected_total_with_amount - 1
+
+
+def test_process_recipe_data_ignores_empty_parsed_ingredient(mealie_app, example_request):
+    result_without_empty_ingredient = mealie_app.process_recipe_data(copy.deepcopy(example_request))
+    emtpy_ingredient_data = {
+        "display": "",
+        "food": None,
+        "note": "",
+        "quantity": 0.0,
+        "unit": None,
+    }
+    example_request["content"]["recipe_ingredient"].append(emtpy_ingredient_data)
+
+    result_with_empty_ingredient = mealie_app.process_recipe_data(example_request)
+
+    assert result_with_empty_ingredient == result_without_empty_ingredient
+    warnings = [args[0] for args, _ in mealie_app.logger.log.warning.call_args_list]
+    assert f"Ignoring empty ingredient {emtpy_ingredient_data}" in warnings
 
 
 def test_add_ingredients_to_bring_empty_list(mealie_app):
