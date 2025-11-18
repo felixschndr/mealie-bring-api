@@ -121,7 +121,8 @@ class MealieBringAPI:
                     )
                 else:
                     ingredient_copy = copy.deepcopy(ingredient)
-                    ingredient_copy["quantity"] *= multiplier
+                    if ingredient_copy["quantity"]:
+                        ingredient_copy["quantity"] *= multiplier
                     result.append(ingredient_copy)
             return result
 

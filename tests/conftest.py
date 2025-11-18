@@ -132,7 +132,14 @@ def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
                                                 "plural_name": "Kilograms",
                                                 "use_abbreviation": False,
                                             },
-                                        }
+                                        },
+                                        {
+                                            "display": "Chocolate",
+                                            "food": {"name": "Chocolate"},
+                                            "note": "",
+                                            "quantity": None,
+                                            "unit": None,
+                                        },
                                     ],
                                 },
                                 "recipe_servings": 1.0,
