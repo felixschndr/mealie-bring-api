@@ -116,6 +116,29 @@ def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
                                     "use_abbreviation": False,
                                 },
                             },
+                            {
+                                "referenced_recipe": {
+                                    "name": "Test Recipe 3",
+                                    "recipe_ingredient": [
+                                        {
+                                            "display": "0.5 Kilograms Sugar",
+                                            "food": {"name": "Sugar", "plural_name": "Sugar"},
+                                            "note": "",
+                                            "quantity": 0.5,
+                                            "unit": {
+                                                "abbreviation": "kg",
+                                                "name": "Kilogram",
+                                                "plural_abbreviation": "",
+                                                "plural_name": "Kilograms",
+                                                "use_abbreviation": False,
+                                            },
+                                        }
+                                    ],
+                                },
+                                "recipe_servings": 1.0,
+                                "recipe_yield": None,
+                                "recipe_yield_quantity": 0.0,
+                            },
                         ],
                         "recipe_servings": 1.0,
                         "recipe_yield": None,
