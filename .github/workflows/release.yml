@@ -132,6 +132,6 @@ jobs:
             ${{ env.commit_log }}
             
             If you like the project, please consider giving it a star on GitHub, thank you very much! ⭐
-          generate_release_notes: true
+          generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
