@@ -12,6 +12,7 @@ from source.mealie_bring_api import Flask, MealieBringAPI
 def mock_event_loop():
     loop = MagicMock(spec=asyncio.AbstractEventLoop)
     loop.run_until_complete = MagicMock()
+    loop.stop = MagicMock()
     return loop
 
 
@@ -20,6 +21,7 @@ def mock_bring_handler():
     handler = MagicMock(spec=BringHandler)
     handler.add_items = AsyncMock()
     handler.notify_users_about_changes_in_list = AsyncMock()
+    handler.logout = AsyncMock()
     return handler
 
 
@@ -124,3 +126,12 @@ def test_add_ingredients_to_bring_with_ingredients(mealie_app, first_ingredient,
 
     mealie_app.bring_handler.add_items.assert_called_once_with(ingredients)
     mealie_app.bring_handler.notify_users_about_changes_in_list.assert_called_once()
+
+
+def test_handle_stop_signal_stops_loop_and_logs_out(mealie_app, monkeypatch):
+    with patch("source.mealie_bring_api.sys.exit") as mock_exit:
+        mealie_app._handle_stop_signal(signal_number=2, _frame=None)
+
+        mealie_app.bring_handler.logout.assert_called_once()
+        mealie_app.loop.stop.assert_called_once()
+        mock_exit.assert_called_once_with(0)

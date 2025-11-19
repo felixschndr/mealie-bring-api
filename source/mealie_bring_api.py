@@ -1,6 +1,9 @@
 import asyncio
 import copy
 import logging
+import signal
+import sys
+from types import FrameType
 from typing import Union
 
 from flask import Blueprint, Flask, request
@@ -22,6 +25,9 @@ class MealieBringAPI:
         self.bring_handler = self._create_bring_handler(self.loop)
         self.mealie_handler = MealieHandler()
         self.app = self._create_app()
+
+        signal.signal(signal.SIGTERM, self._handle_stop_signal)
+        signal.signal(signal.SIGINT, self._handle_stop_signal)
 
     @staticmethod
     def _create_logger() -> LoggerMixin:
@@ -141,6 +147,14 @@ class MealieBringAPI:
     def run(self) -> None:
         self.logger.log.info(f"Listening on {self.host}:{self.port}{self.basepath}")
         self.app.run(host=self.host, port=self.port)
+
+    def _handle_stop_signal(self, signal_number: int, _frame: FrameType) -> None:
+        self.logger.log.info(f"Received {signal.Signals(signal_number).name}. Exiting now...")
+
+        self.loop.run_until_complete(self.bring_handler.logout())
+        self.loop.stop()
+
+        sys.exit(0)
 
 
 app = Flask(__name__)
