@@ -48,7 +48,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     needs: [ check_version ]
-    # Always build for PRs, but only build on main if version changed
+    # Always build for PRs, but only build on main if the version changed
     if: github.ref != 'refs/heads/main' || needs.check_version.outputs.version_changed == 'true'
     steps:
       - name: Checkout repository
@@ -58,7 +58,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
       - name: Set up Docker Buildx
