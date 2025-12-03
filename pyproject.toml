@@ -10,7 +10,7 @@ python = "^3.12"
 flask = "^3.1.1"
 python-dotenv = "^1.1.1"
 aiohttp = "^3.12.14"
-bring-api = "0.9.1"
+bring-api = "1.1.1"
 requests = "^2.32.5"
 
 [tool.poetry.group.dev.dependencies]
