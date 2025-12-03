@@ -71,7 +71,7 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
@@ -82,7 +82,7 @@ jobs:
 
       - name: Build and push Docker image as latest
         if: github.ref == 'refs/heads/main' && needs.check_version.outputs.version_changed == 'true'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
