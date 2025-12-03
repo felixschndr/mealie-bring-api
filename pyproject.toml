@@ -14,7 +14,7 @@ bring-api = "0.9.1"
 requests = "^2.32.5"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.4.1"
+pytest = "^9.0.1"
 
 [tool.isort]
 profile = "black"
