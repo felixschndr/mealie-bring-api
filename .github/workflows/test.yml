@@ -14,10 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Set up Python 3.12
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.14'
           cache: 'pip'
 
       - name: Install pre-commit
@@ -32,10 +32,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Set up Python 3.12
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.14'
           cache: 'pip'
 
       - name: Install Poetry
@@ -60,16 +60,37 @@ jobs:
       - name: Build Docker image
         run: docker build -t mealie-bring-api:test .
 
-      - name: Run Docker container and validate error message
+      - name: Run Docker container and validate successful startup
         run: |
-          # Run the container without required environment variables and capture output
-          output=$(docker run --rm mealie-bring-api:test 2>&1 || true)
-
-          # Check if the output contains the expected error message
-          if echo "$output" | grep -q "The environment variable \"BRING_USERNAME\" is not set!"; then
-            echo "Found expected error message in output"
-          else
-            echo "Expected error message not found in output"
-            echo "Actual output: $output"
+          readonly TIMEOUT=20
+          
+          CONTAINER_ID=$(docker run \
+            -e BRING_USERNAME=${{ secrets.BRING_TESTING_USERNAME}} \
+            -e BRING_PASSWORD=${{ secrets.BRING_TESTING_PASSWORD}} \
+            -e BRING_LIST_NAME=Zuhause \
+            -d mealie-bring-api:test)
+      
+          echo "Started container: ${CONTAINER_ID}"
+          echo "Waiting up to ${TIMEOUT} seconds for expected output ..."
+      
+          FOUND=0
+          for i in $(seq 1 ${TIMEOUT}); do
+            LOGS=$(docker logs "${CONTAINER_ID}" 2>&1 || true)
+      
+            if echo "${LOGS}" | grep -q "Listening on 0.0.0.0:8742"; then
+              echo "✅ Expected output found!"
+              FOUND=1
+              break
+            fi
+      
+            sleep 1
+          done
+      
+          docker stop "${CONTAINER_ID}" >/dev/null
+      
+          if [ "${FOUND}" -ne 1 ]; then
+            echo "❌ Expected output not found!"
             exit 1
           fi
+          echo "---- Container logs ----"
+          echo "${LOGS}"
