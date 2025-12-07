@@ -42,9 +42,9 @@ class BringHandler(LoggerMixin):
         list_name = EnvironmentVariableGetter.get("BRING_LIST_NAME")
 
         list_name_lower = list_name.lower()
-        for bring_list in (await self.bring.load_lists())["lists"]:
-            if bring_list["name"].lower() == list_name_lower:
-                bring_list_uuid = bring_list["listUuid"]
+        for bring_list in (await self.bring.load_lists()).lists:
+            if bring_list.name.lower() == list_name_lower:
+                bring_list_uuid = bring_list.listUuid
                 self.log.info(f'Found the list with the name "{list_name}" (UUID: {bring_list_uuid})')
                 return bring_list_uuid
 
