@@ -17,10 +17,6 @@ class BringHandler(LoggerMixin):
         self.list_uuid = loop.run_until_complete(self.determine_list_uuid())
 
     async def _login(self) -> None:
-        if self.bring:
-            # Close the HTTP Session if we are re-authenticating as the library would log an error otherwise
-            await self.logout()
-
         self.session = aiohttp.ClientSession()
         self.bring = Bring(
             self.session,
@@ -52,12 +48,6 @@ class BringHandler(LoggerMixin):
         sys.exit(1)
 
     async def add_items(self, ingredients: list[Ingredient]) -> None:
-        seconds_until_token_expires = self.bring.expires_in
-        self.log.debug(f"Seconds until token expires: {seconds_until_token_expires}")
-        if seconds_until_token_expires < 120:
-            self.log.info("The authentication token has expired. Re-logging in...")
-            await self._login()
-
         await self.bring.batch_update_list(
             self.list_uuid, [ingredient.to_dict() for ingredient in ingredients], BringItemOperation.ADD
         )
