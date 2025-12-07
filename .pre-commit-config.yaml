@@ -1,7 +1,3 @@
-default_install_hook_types:
-  - pre-commit
-  - prepare-commit-msg
-  - commit-msg
 repos:
   - repo: https://github.com/timothycrosley/isort
     rev: 6.0.1
