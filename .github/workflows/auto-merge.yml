@@ -1,0 +1,17 @@
+name: auto-merge
+
+on:
+  pull_request:
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Automatically merge minor version updates from Dependabot
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: minor
+          github-token: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
