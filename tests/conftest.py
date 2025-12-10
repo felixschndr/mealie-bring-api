@@ -51,7 +51,9 @@ def ingredient_raw_base_data(food_name_singular: str, food_name_plural: str, uni
 @pytest.fixture
 def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
     return {
+        "action": {"action_type": "post"},
         "content": {
+            "name": "My testing recipe",
             "recipe_servings": 5.0,
             "recipe_yield_quantity": 0.0,
             "recipe_yield": None,
@@ -65,7 +67,7 @@ def example_request(ingredient_raw_base_data: dict, unit: dict) -> dict:
                         "plural_name": None,
                     },
                     "note": "",
-                    "display": "1 Agavendicksaft",
+                    "display": "1 Apple",
                 },
                 {
                     "quantity": 5.0,

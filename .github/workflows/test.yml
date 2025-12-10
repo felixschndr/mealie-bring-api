@@ -48,8 +48,14 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Run tests
-        run: |
-          poetry run pytest
+        run: poetry run pytest
+
+      - name: Run integration tests
+        env:
+          BRING_USERNAME: ${{ secrets.BRING_TESTING_USERNAME}}
+          BRING_PASSWORD: ${{ secrets.BRING_TESTING_PASSWORD}}
+          BRING_LIST_NAME: Zuhause
+        run: poetry run pytest tests/test_integration.py
 
   validate-docker-image:
     runs-on: ubuntu-latest
@@ -63,34 +69,35 @@ jobs:
       - name: Run Docker container and validate successful startup
         run: |
           readonly TIMEOUT=20
-          
+
           CONTAINER_ID=$(docker run \
             -e BRING_USERNAME=${{ secrets.BRING_TESTING_USERNAME}} \
             -e BRING_PASSWORD=${{ secrets.BRING_TESTING_PASSWORD}} \
             -e BRING_LIST_NAME=Zuhause \
             -d mealie-bring-api:test)
-      
+
           echo "Started container: ${CONTAINER_ID}"
           echo "Waiting up to ${TIMEOUT} seconds for expected output ..."
-      
+
           FOUND=0
           for i in $(seq 1 ${TIMEOUT}); do
             LOGS=$(docker logs "${CONTAINER_ID}" 2>&1 || true)
-      
+
             if echo "${LOGS}" | grep -q "Listening on 0.0.0.0:8742"; then
               echo "✅ Expected output found!"
               FOUND=1
               break
             fi
-      
+
             sleep 1
           done
-      
+
           docker stop "${CONTAINER_ID}" >/dev/null
-      
+          
+          echo "---- Container logs ----"
+          echo "${LOGS}"
+
           if [ "${FOUND}" -ne 1 ]; then
             echo "❌ Expected output not found!"
             exit 1
           fi
-          echo "---- Container logs ----"
-          echo "${LOGS}"
