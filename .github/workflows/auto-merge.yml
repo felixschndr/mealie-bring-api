@@ -6,12 +6,18 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
 
       - name: Automatically merge minor version updates from Dependabot
-        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        uses: fastify/github-action-merge-dependabot@v3
         with:
           target: minor
-          github-token: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+          merge-method: rebase
+          use-github-auto-merge: true
