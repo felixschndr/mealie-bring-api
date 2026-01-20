@@ -40,8 +40,8 @@ class MealieHandler(LoggerMixin):
         try:
             response.raise_for_status()
             self.log.info("Connection to Mealie successful")
-        except requests.exceptions.HTTPError:
-            self.log.critical("Invalid Mealie URL or API key!")
+        except requests.exceptions.HTTPError as e:
+            self.log.critical(f"Invalid Mealie URL or API key: {e}")
             sys.exit(1)
 
     def get_items_on_shopping_list(self) -> list[dict]:
