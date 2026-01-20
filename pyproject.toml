@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Mealie Bring API"
-version = "1.2.4"
+version = "1.2.5"
 description = "A simple webserver that allows ingredients sent by Mealie to be added to a bring shopping list"
 authors = ["Felix Schneider <mail@fschneider.me>"]
 package-mode = false
