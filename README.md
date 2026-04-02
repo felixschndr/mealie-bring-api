@@ -25,7 +25,7 @@ If you like the project, please consider giving it a star on GitHub, thank you v
 #### Action 1: Adding ingredients from a recipe to Bring
 
 1. The `client` (e.g. your phone or PC) sends a `POST` request to the `Mealie instance` instructing it to trigger the adding of the ingredients.
-2. The `Mealie instance` sends a `POST` request to this `webserver` at the endpoint `/` with the ingredients in its body. An example for such a request can be found in the [tests](test/conftest.py).
+2. The `Mealie instance` sends a `POST` request to this `webserver` at the endpoint `/` with the ingredients in its body. An example for such a request can be found in the [tests](tests/conftest.py).
 3. The `webserver` extracts the ingredients from the request and adds them directly to a list of the users choice via the [`Bring API`](https://github.com/miaucl/bring-api).
 
 #### Action 2: Moving ingredients from a shopping list to Bring (optional)
@@ -48,7 +48,7 @@ Deployment can be done in three simple steps:
 No matter which deployment option you chose, you must set up some environment variables:
 
 | Variable name               | Description                                                                                                                                                                                                    | Required | Default   | Example                            | Required for Action |
-|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------:|-----------|------------------------------------|---------------------|
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | --------- | ---------------------------------- | ------------------- |
 | `BRING_USERNAME`            | The email address of your bring account                                                                                                                                                                        |   Yes    | -         | `myuser@myemailprovider.com`       | 1, 2                |
 | `BRING_PASSWORD`            | The password of your bring account                                                                                                                                                                             |   Yes    | -         | `my super secret password`         | 1, 2                |
 | `BRING_LIST_NAME`           | The exact name of the list you want to add the ingredients to, supports special characters                                                                                                                     |   Yes    | -         | `My shopping list with spaces`     | 1, 2                |
@@ -113,7 +113,7 @@ After deploying the container, you need to set up the actions you want to use.
 
 #### Action 1: Adding ingredients from a recipe to Bring
 
-1. Head over to `http(s)://<your-mealie-instance>/group/data/recipe-actions` (e.g., 
+1. Head over to `http(s)://<your-mealie-instance>/group/data/recipe-actions` (e.g.,
 `http://localhost:1234/group/data/recipe-actions`) while being logged in as an administrator.
 
    ![actions before adding](./assets/images/actions_before_adding.png)
@@ -193,7 +193,7 @@ If you want to use this action, you need to:
 
 ## Maintenance
 
-You can check whether the webserver is still alive by sending a `GET` request to `/status` and check if you get a `200` 
+You can check whether the webserver is still alive by sending a `GET` request to `/status` and check if you get a `200`
 status code:
 ```bash
 $ curl -I https://mealie-bring-api.yourlocaldomain.com/status
