@@ -48,7 +48,7 @@ Deployment can be done in three simple steps:
 No matter which deployment option you chose, you must set up some environment variables:
 
 | Variable name               | Description                                                                                                                                                                                                    | Required | Default   | Example                            | Required for Action |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | --------- | ---------------------------------- | ------------------- |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------:|-----------|------------------------------------|---------------------|
 | `BRING_USERNAME`            | The email address of your bring account                                                                                                                                                                        |   Yes    | -         | `myuser@myemailprovider.com`       | 1, 2                |
 | `BRING_PASSWORD`            | The password of your bring account                                                                                                                                                                             |   Yes    | -         | `my super secret password`         | 1, 2                |
 | `BRING_LIST_NAME`           | The exact name of the list you want to add the ingredients to, supports special characters                                                                                                                     |   Yes    | -         | `My shopping list with spaces`     | 1, 2                |
@@ -97,6 +97,7 @@ you can ignore some environment variables (e.g. `HTTP_HOST` and `HTTP_PORT`).
 	       -e BRING_PASSWORD="my super secret password" \
 	       -e BRING_LIST_NAME="My shopping list with spaces" \
 	       -p 1234:8742 \
+	       --cap-drop=ALL \
 	       ghcr.io/felixschndr/mealie-bring-api:latest
 	   ```
 
