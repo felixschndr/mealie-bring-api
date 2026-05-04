@@ -196,14 +196,14 @@ files = [
 
 [[package]]
 name = "bring-api"
-version = "1.1.1"
+version = "1.1.2"
 description = "Unofficial package to access Bring! shopping lists API."
 optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "bring_api-1.1.1-py3-none-any.whl", hash = "sha256:3cb34da20421f24c5c40fa5743457069266850f5a042ddb34afbda8d5bcadd68"},
-    {file = "bring_api-1.1.1.tar.gz", hash = "sha256:af139e7b7d3cbfa444c27bf06b0f56b1499a6c0bbbc7c41519d732afeae0cf19"},
+    {file = "bring_api-1.1.2-py3-none-any.whl", hash = "sha256:2b90ceb8271cf3333e448c1df98b760b2b9e978fe4765c600b289cda6e0607d9"},
+    {file = "bring_api-1.1.2.tar.gz", hash = "sha256:6e64d18ec91107cc29cd6445f06cebc50bb0fa24a766c5d073d0d30e9b217d28"},
 ]
 
 [package.dependencies]
@@ -1385,4 +1385,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "696d334691e0d7472828377d988922f9aea25048b26dd4b1569ab00a5dc3e9a5"
+content-hash = "dc17912e3ce07196396505eef40bbbe1b364727500e203ff79527599b8669145"
