@@ -2,8 +2,6 @@ name: Pipeline that validates and tests the source code
 
 on:
   push:
-    branches:
-      - main
   pull_request:
   workflow_dispatch:
 
