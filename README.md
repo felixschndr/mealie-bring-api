@@ -1,6 +1,6 @@
 # Mealie Bring API Integration
 
-The self-hosted recipe manager [Mealie](https://github.com/mealie-recipes/mealie) startet to support sending a recipe to a Bring shopping list with this [PR](https://github.com/mealie-recipes/mealie/pull/3448). However, this requires the Mealie instance to be publicly available (from the internet). Since many users want their self-hosted services to **not** be available from the internet, I chose to create this integration.
+The self-hosted recipe manager [Mealie](https://github.com/mealie-recipes/mealie) started to support sending a recipe to a Bring shopping list with this [PR](https://github.com/mealie-recipes/mealie/pull/3448). However, this requires the Mealie instance to be publicly available (from the internet). Since many users want their self-hosted services to **not** be available from the internet, I chose to create this integration.
 
 This project provides a simple webserver which offers two main actions:
 1. Adding ingredients from a Mealie recipe to a specified Bring shopping list
