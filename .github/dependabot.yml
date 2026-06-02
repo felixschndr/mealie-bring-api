@@ -4,19 +4,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    assignees:
-      - "felixschndr"
-
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    assignees:
-      - "felixschndr"
+    cooldown:
+      default-days: 3 # Updates have to be at least 3 days old to prevent supply chain attacks.
+    # Assignment happens in .github/workflows/dependabot-auto-merge.yml
+    labels:
+      - "dependencies"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    assignees:
-      - "felixschndr"
+    cooldown:
+      default-days: 3
+    labels:
+      - "dependencies"
+      - "github-actions"
