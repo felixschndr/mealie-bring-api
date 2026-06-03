@@ -7,7 +7,6 @@ services:
     [...]
     depends_on:
       - database
-      - bring-api
   database:
     container_name: mealie_database
     image: postgres:15
@@ -34,3 +33,6 @@ services:
       HTTP_BASE_PATH: ""
     cap_drop:
       - ALL
+
+    depends_on:
+      - mealie
