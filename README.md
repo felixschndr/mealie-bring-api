@@ -4,7 +4,7 @@ The self-hosted recipe manager [Mealie](https://github.com/mealie-recipes/mealie
 
 This project provides a simple webserver which offers two main actions:
 1. Adding ingredients from a Mealie recipe to a specified Bring shopping list
-2. Moving all ingredients from a Mealie shopping list to a specified Bring shopping list (optional)
+2. Moving all ingredients from a Mealie shopping list (not a specific recipe) to a specified Bring shopping list (optional)
 
 If you like the project, please consider giving it a star on GitHub, thank you very much! ⭐
 
