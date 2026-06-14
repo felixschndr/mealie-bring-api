@@ -1,13 +1,9 @@
 import logging
-import os
 from unittest.mock import MagicMock
 
-import certifi
 import pytest
 from source.ingredient import Ingredient
 from source.logger_mixin import LoggerMixin
-
-os.environ.setdefault("SSL_CERT_FILE", certifi.where())
 
 
 @pytest.fixture

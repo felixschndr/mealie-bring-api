@@ -1,7 +1,9 @@
 import asyncio
+import ssl
 import sys
 
 import aiohttp
+import certifi
 from bring_api import Bring, BringItemOperation, BringNotificationType
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.ingredient import Ingredient
@@ -17,7 +19,8 @@ class BringHandler(LoggerMixin):
         self.list_uuid = loop.run_until_complete(self.determine_list_uuid())
 
     async def _login(self) -> None:
-        self.session = aiohttp.ClientSession()
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_context))
         self.bring = Bring(
             self.session,
             EnvironmentVariableGetter.get("BRING_USERNAME"),

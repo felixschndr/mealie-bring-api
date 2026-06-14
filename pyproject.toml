@@ -12,10 +12,10 @@ python-dotenv = "^1.1.1"
 aiohttp = "^3.13.5"
 bring-api = "1.1.2"
 requests = "^2.33.1"
+certifi = "^2026.5.20"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.3"
-certifi = "^2026.5.20"
 
 [tool.isort]
 profile = "black"
