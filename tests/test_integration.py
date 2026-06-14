@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import os
+import socket
 import subprocess  # nosec B404
 import time
 from dataclasses import dataclass
@@ -21,14 +22,14 @@ pytestmark = pytest.mark.skipif(
 
 def test_example_request_against_server(example_request):
     with running_server({"MEALIE_BASE_URL": "", "MEALIE_API_KEY": ""}) as server:
-        response = requests.post("http://localhost:8742/", json=example_request, timeout=5)
+        response = requests.post(f"{server.base_url}/", json=example_request, timeout=5)
         assert response.status_code == 200
         assert response.text == "OK"
 
     assert_server_output(
         server.stdout,
         [
-            "Listening on 0.0.0.0:8742",
+            f"Listening on 0.0.0.0:{server.port}",
             "Adding ingredients to Bring:",
             "Received SIGTERM. Exiting now...",
         ],
@@ -46,7 +47,7 @@ def test_move_ingredients_from_shopping_list_against_server():
             "MEALIE_SHOPPING_LIST_UUID": demo_setup.list_uuid,
         }
     ) as server:
-        response = requests.post("http://localhost:8742/move-ingredients-from-shopping-list", timeout=30)
+        response = requests.post(f"{server.base_url}/move-ingredients-from-shopping-list", timeout=30)
         assert response.status_code == 200
         assert response.text == "OK"
 
@@ -72,25 +73,40 @@ def test_move_ingredients_from_shopping_list_against_server():
 @dataclass
 class RunningServer:
     process: subprocess.Popen
+    port: int
     stdout: str | None = None
+
+    @property
+    def base_url(self) -> str:
+        return f"http://localhost:{self.port}"
+
+
+def _find_free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("", 0))
+        return sock.getsockname()[1]
 
 
 @contextlib.contextmanager
 def running_server(extra_env: dict[str, str]):
+    port = _find_free_port()
+    # `-u` keeps stdout unbuffered so the full server log is captured even when the process is terminated
     process = subprocess.Popen(  # nosec B603, B607
-        ["python", "-m", "source.mealie_bring_api"],
+        ["python", "-u", "-m", "source.mealie_bring_api"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        env={**os.environ, **(extra_env or {})},
+        env={**os.environ, "HTTP_PORT": str(port), **(extra_env or {})},
     )
-    server = RunningServer(process)
+    server = RunningServer(process, port)
     try:
         startup_timeout_seconds = 15
         start = time.time()
         while time.time() - start < startup_timeout_seconds:
+            if process.poll() is not None:
+                raise AssertionError("Server exited during startup")
             try:
-                if requests.get("http://localhost:8742/status", timeout=5).status_code == 200:
+                if requests.get(f"{server.base_url}/status", timeout=5).status_code == 200:
                     break
             except requests.exceptions.ConnectionError:
                 print("Waiting for server to start...")
@@ -100,7 +116,8 @@ def running_server(extra_env: dict[str, str]):
 
         yield server
     finally:
-        process.terminate()
+        if process.poll() is None:
+            process.terminate()
         server.stdout = process.communicate(timeout=10)[0]
 
 

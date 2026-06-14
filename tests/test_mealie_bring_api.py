@@ -45,8 +45,6 @@ def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mo
     monkeypatch.setattr(MealieBringAPI, "_create_event_loop", lambda self: mock_event_loop)
     monkeypatch.setattr(MealieBringAPI, "_create_bring_handler", lambda self, loop: mock_bring_handler)
     monkeypatch.setattr(MealieBringAPI, "_create_app", lambda self: mock_flask_app)
-    # MealieHandler is instantiated directly in __init__ and would otherwise make a real
-    # network call against the configured Mealie instance, so mock it out as well.
     monkeypatch.setattr("source.mealie_bring_api.MealieHandler", lambda: mock_mealie_handler)
 
     return MealieBringAPI()
