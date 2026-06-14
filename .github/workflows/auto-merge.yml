@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@main
 
       - name: Automatically merge minor version updates from Dependabot
-        uses: fastify/github-action-merge-dependabot@v3
+        uses: fastify/github-action-merge-dependabot@v3.13.0
         with:
           target: minor
           merge-method: rebase
