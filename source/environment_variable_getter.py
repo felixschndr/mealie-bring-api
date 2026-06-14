@@ -3,7 +3,7 @@ from typing import Any
 
 from dotenv import find_dotenv, load_dotenv
 
-load_dotenv(override=True)
+load_dotenv()
 
 # Load variables from .env.override with higher priority
 load_dotenv(dotenv_path=find_dotenv(".env.override"), override=True)

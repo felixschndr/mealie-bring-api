@@ -6,6 +6,7 @@ import pytest
 from source.bring_handler import BringHandler
 from source.ingredient import Ingredient
 from source.mealie_bring_api import Flask, MealieBringAPI
+from source.mealie_handler import MealieHandler
 
 
 @pytest.fixture
@@ -34,11 +35,19 @@ def mock_flask_app():
 
 
 @pytest.fixture
-def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mock_flask_app):
+def mock_mealie_handler():
+    return MagicMock(spec=MealieHandler)
+
+
+@pytest.fixture
+def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mock_flask_app, mock_mealie_handler):
     monkeypatch.setattr(MealieBringAPI, "_create_logger", lambda self: mock_logger)
     monkeypatch.setattr(MealieBringAPI, "_create_event_loop", lambda self: mock_event_loop)
     monkeypatch.setattr(MealieBringAPI, "_create_bring_handler", lambda self, loop: mock_bring_handler)
     monkeypatch.setattr(MealieBringAPI, "_create_app", lambda self: mock_flask_app)
+    # MealieHandler is instantiated directly in __init__ and would otherwise make a real
+    # network call against the configured Mealie instance, so mock it out as well.
+    monkeypatch.setattr("source.mealie_bring_api.MealieHandler", lambda: mock_mealie_handler)
 
     return MealieBringAPI()
 

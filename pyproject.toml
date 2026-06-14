@@ -15,6 +15,7 @@ requests = "^2.33.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.3"
+certifi = "^2026.5.20"
 
 [tool.isort]
 profile = "black"
