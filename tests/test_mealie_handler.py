@@ -40,6 +40,7 @@ def mock_env_getter(mock_env_vars):
 def mock_response():
     response = MagicMock(spec=requests.Response)
     response.raise_for_status = MagicMock()
+    response.status_code = 200
     response.json.return_value = {"items": []}
     return response
 
