@@ -1,6 +1,7 @@
 import sys
 
 import requests
+from requests.exceptions import JSONDecodeError
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.logger_mixin import LoggerMixin
 
@@ -54,7 +55,15 @@ class MealieHandler(LoggerMixin):
         self.log.debug(f"Response ({response.status_code}): {response.text}")
         response.raise_for_status()
 
-        items_on_shopping_list = response.json()["items"]
+        try:
+            items_on_shopping_list = response.json()["items"]
+        except JSONDecodeError as e:
+            if "<!doctype html" in response.text:
+                self.log.critical(
+                    "The response from Mealie seems to be HTML. Please check your Mealie URL and API key."
+                )
+                return []
+            raise e
 
         if self.shopping_list_uuid:
             items_on_shopping_list = [

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
+from requests import JSONDecodeError
 from source.environment_variable_getter import EnvironmentVariableGetter
 from source.mealie_handler import MealieHandler
 
@@ -60,6 +61,7 @@ def mealie_handler(monkeypatch, mock_logger, mock_env_getter, mock_requests):
         setup_handler_with_credentials(handler, mock_logger)
         handler.shopping_list_uuid = "test_uuid"
         handler.mealie_is_setup = True
+        handler.log = logging.getLogger("MealieHandler")
         return handler
 
 
@@ -207,6 +209,32 @@ def test_get_items_on_shopping_list_without_uuid(mealie_handler, mock_requests):
     assert len(result) == 2
     assert result[0]["id"] == "item1"
     assert result[1]["id"] == "item2"
+
+
+def test_get_items_on_shopping_list_with_invalid_response(mealie_handler, mock_requests, caplog):
+    caplog.set_level(logging.INFO)
+    mock_get, _ = mock_requests
+    mock_response = mock_get.return_value
+    mock_response.text = "Something happened"
+    mock_response.json.side_effect = JSONDecodeError("Expecting value: line 1 column 1 (char 0)", "{}", 0)
+
+    with pytest.raises(JSONDecodeError):
+        mealie_handler.get_items_on_shopping_list()
+
+
+def test_get_items_on_shopping_list_with_html_as_response(mealie_handler, mock_requests, caplog):
+    caplog.set_level(logging.INFO)
+    mock_get, _ = mock_requests
+    mock_response = mock_get.return_value
+    mock_response.text = (
+        '<!doctype html><html lang="en-US" dir="ltr"><head><base href="https://accounts.google.com/v3/signin/">'
+    )
+    mock_response.json.side_effect = JSONDecodeError("Expecting value: line 1 column 1 (char 0)", "{}", 0)
+
+    result = mealie_handler.get_items_on_shopping_list()
+
+    assert result == []
+    assert "The response from Mealie seems to be HTML. Please check your Mealie URL and API key." in caplog.text
 
 
 def test_delete_items_from_shopping_list(mealie_handler, mock_requests):
