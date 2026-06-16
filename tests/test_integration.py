@@ -3,6 +3,7 @@ import contextlib
 import os
 import socket
 import subprocess  # nosec B404
+import threading
 import time
 from dataclasses import dataclass
 
@@ -102,6 +103,11 @@ def running_server(extra_env: dict[str, str]):
         env={**os.environ, "PYTHONPATH": PROJECT_ROOT, "HTTP_PORT": str(port), **(extra_env or {})},
     )
     server = RunningServer(process, port)
+    # Drain stdout in a background thread so the OS pipe buffer never fills up. Otherwise a verbose server
+    # (e.g. LOG_LEVEL=DEBUG) blocks on writing once the buffer is full and the request handler deadlocks.
+    output_lines: list[str] = []
+    reader = threading.Thread(target=lambda: output_lines.extend(process.stdout), daemon=True)
+    reader.start()
     try:
         startup_timeout_seconds = 15
         start = time.time()
@@ -121,7 +127,9 @@ def running_server(extra_env: dict[str, str]):
     finally:
         if process.poll() is None:
             process.terminate()
-        server.stdout = process.communicate(timeout=10)[0]
+        process.wait(timeout=10)
+        reader.join(timeout=10)
+        server.stdout = "".join(output_lines)
 
 
 def assert_server_output(stdout: str, messages_to_find: list[str]) -> None:
