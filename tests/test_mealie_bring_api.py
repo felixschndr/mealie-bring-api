@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from source.bring_handler import BringHandler
 from source.ingredient import Ingredient
+from source.logger_mixin import LoggerMixin
 from source.mealie_bring_api import Flask, MealieBringAPI
 from source.mealie_handler import MealieHandler
 
@@ -40,8 +41,8 @@ def mock_mealie_handler():
 
 
 @pytest.fixture
-def mealie_app(monkeypatch, mock_logger, mock_event_loop, mock_bring_handler, mock_flask_app, mock_mealie_handler):
-    monkeypatch.setattr(MealieBringAPI, "_create_logger", lambda self: mock_logger)
+def mealie_app(monkeypatch, mock_event_loop, mock_bring_handler, mock_flask_app, mock_mealie_handler):
+    monkeypatch.setattr(MealieBringAPI, "_create_logger", lambda self: LoggerMixin())
     monkeypatch.setattr(MealieBringAPI, "_create_event_loop", lambda self: mock_event_loop)
     monkeypatch.setattr(MealieBringAPI, "_create_bring_handler", lambda self, loop: mock_bring_handler)
     monkeypatch.setattr(MealieBringAPI, "_create_app", lambda self: mock_flask_app)
@@ -101,7 +102,7 @@ def test_process_recipe_data_with_household_ingredient(mealie_app, example_reque
             assert mock_from_raw_data.call_count == expected_total_with_amount - 1
 
 
-def test_process_recipe_data_ignores_empty_parsed_ingredient(mealie_app, example_request):
+def test_process_recipe_data_ignores_empty_parsed_ingredient(mealie_app, example_request, caplog):
     result_without_empty_ingredient = mealie_app.process_recipe_data(copy.deepcopy(example_request))
     emtpy_ingredient_data = {
         "display": "",
@@ -115,8 +116,7 @@ def test_process_recipe_data_ignores_empty_parsed_ingredient(mealie_app, example
     result_with_empty_ingredient = mealie_app.process_recipe_data(example_request)
 
     assert result_with_empty_ingredient == result_without_empty_ingredient
-    warnings = [args[0] for args, _ in mealie_app.logger.log.warning.call_args_list]
-    assert f"Ignoring empty ingredient {emtpy_ingredient_data}" in warnings
+    assert f"Ignoring empty ingredient {emtpy_ingredient_data}" in caplog.text
 
 
 def test_add_ingredients_to_bring_empty_list(mealie_app):
