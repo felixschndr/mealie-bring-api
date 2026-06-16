@@ -17,6 +17,8 @@ MEALIE_DEMO_BASE_URL = "https://demo.mealie.io"
 MEALIE_DEMO_USERNAME = "changeme@example.com"
 MEALIE_DEMO_PASSWORD = "MyPassword"  # nosec B105
 
+HTTP_REQUEST_TIMEOUT_IN_SECONDS = 5
+
 pytestmark = pytest.mark.skipif(
     not os.getenv("BRING_USERNAME") or not os.getenv("BRING_PASSWORD") or not os.getenv("BRING_LIST_NAME"),
     reason="The necessary environment variables are not set.",
@@ -25,7 +27,7 @@ pytestmark = pytest.mark.skipif(
 
 def test_example_request_against_server(example_request):
     with running_server({"MEALIE_BASE_URL": "", "MEALIE_API_KEY": ""}) as server:
-        response = requests.post(f"{server.base_url}/", json=example_request, timeout=5)
+        response = requests.post(f"{server.base_url}/", json=example_request, timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS)
         assert response.status_code == 200
         assert response.text == "OK"
 
@@ -50,7 +52,9 @@ def test_move_ingredients_from_shopping_list_against_server():
             "MEALIE_SHOPPING_LIST_UUID": demo_setup.list_uuid,
         }
     ) as server:
-        response = requests.post(f"{server.base_url}/move-ingredients-from-shopping-list", timeout=30)
+        response = requests.post(  # nosec B113
+            f"{server.base_url}/move-ingredients-from-shopping-list", timeout=2 * HTTP_REQUEST_TIMEOUT_IN_SECONDS
+        )
         assert response.status_code == 200
         assert response.text == "OK"
 
@@ -115,7 +119,10 @@ def running_server(extra_env: dict[str, str]):
             if process.poll() is not None:
                 raise AssertionError("Server exited during startup")
             try:
-                if requests.get(f"{server.base_url}/status", timeout=5).status_code == 200:
+                if (
+                    requests.get(f"{server.base_url}/status", timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS).status_code
+                    == 200
+                ):
                     break
             except requests.exceptions.ConnectionError:
                 print("Waiting for server to start...")
@@ -173,7 +180,7 @@ def _mealie_demo_login() -> str:
     response = requests.post(
         f"{MEALIE_DEMO_BASE_URL}/api/auth/token",
         data={"username": MEALIE_DEMO_USERNAME, "password": MEALIE_DEMO_PASSWORD, "remember_me": "false"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
     response.raise_for_status()
     return response.json()["access_token"]
@@ -184,7 +191,7 @@ def _mealie_demo_create_api_key(access_token: str, name: str) -> tuple[str, int]
         f"{MEALIE_DEMO_BASE_URL}/api/users/api-tokens",
         json={"name": name},
         headers={"Authorization": f"Bearer {access_token}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
     response.raise_for_status()
     data = response.json()
@@ -195,7 +202,7 @@ def _mealie_demo_delete_api_key(access_token: str, token_id: int) -> None:
     requests.delete(
         f"{MEALIE_DEMO_BASE_URL}/api/users/api-tokens/{token_id}",
         headers={"Authorization": f"Bearer {access_token}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     ).raise_for_status()
 
 
@@ -204,7 +211,7 @@ def _mealie_demo_create_shopping_list(api_key: str, name: str) -> str:
         f"{MEALIE_DEMO_BASE_URL}/api/households/shopping/lists",
         json={"name": name},
         headers={"Authorization": f"Bearer {api_key}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
     response.raise_for_status()
     return response.json()["id"]
@@ -214,7 +221,7 @@ def _mealie_demo_delete_shopping_list(api_key: str, list_uuid: str) -> None:
     requests.delete(
         f"{MEALIE_DEMO_BASE_URL}/api/households/shopping/lists/{list_uuid}",
         headers={"Authorization": f"Bearer {api_key}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
 
 
@@ -229,7 +236,7 @@ def _mealie_demo_add_item(api_key: str, list_uuid: str, note: str, quantity: flo
             "disableAmount": True,
         },
         headers={"Authorization": f"Bearer {api_key}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
     response.raise_for_status()
 
@@ -238,7 +245,7 @@ def _mealie_demo_get_items(api_key: str, list_uuid: str) -> list[dict]:
     response = requests.get(
         f"{MEALIE_DEMO_BASE_URL}/api/households/shopping/items?perPage=-1",
         headers={"Authorization": f"Bearer {api_key}"},
-        timeout=15,
+        timeout=HTTP_REQUEST_TIMEOUT_IN_SECONDS,
     )
     response.raise_for_status()
     return [item for item in response.json()["items"] if item["shoppingListId"] == list_uuid]
