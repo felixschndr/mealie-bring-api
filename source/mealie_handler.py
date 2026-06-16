@@ -51,6 +51,7 @@ class MealieHandler(LoggerMixin):
             headers={"Authorization": f"Bearer {self.mealie_api_key}"},
             timeout=20,
         )
+        self.log.debug(f"Response ({response.status_code}): {response.text}")
         response.raise_for_status()
 
         items_on_shopping_list = response.json()["items"]
