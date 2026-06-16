@@ -10,6 +10,8 @@ import pytest
 import requests
 from source.bring_handler import BringHandler
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 MEALIE_DEMO_BASE_URL = "https://demo.mealie.io"
 MEALIE_DEMO_USERNAME = "changeme@example.com"
 MEALIE_DEMO_PASSWORD = "MyPassword"  # nosec B105
@@ -96,7 +98,8 @@ def running_server(extra_env: dict[str, str]):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        env={**os.environ, "HTTP_PORT": str(port), **(extra_env or {})},
+        cwd=PROJECT_ROOT,
+        env={**os.environ, "PYTHONPATH": PROJECT_ROOT, "HTTP_PORT": str(port), **(extra_env or {})},
     )
     server = RunningServer(process, port)
     try:
