@@ -55,6 +55,7 @@ No matter which deployment option you chose, you must set up some environment va
 | `MEALIE_BASE_URL`           | The base URL of your Mealie instance. You can use the name of the container if both apps are running in the same Docker network. This bypasses any reverse proxy you might have set up; do this if you are running some sort of OIDC provider. |    No    | -         | `http://mealie:9000` or `https://mealie.yourdomain.com` | 2                   |
 | `MEALIE_API_KEY`            | The API key for your Mealie instance. Can be generated in Mealie under `https://mealie.yourdomain.com/user/profile/api-tokens`                                                                                                                 |    No    | -         | `mealie_api_key_123456`                                 | 2                   |
 | `MEALIE_SHOPPING_LIST_UUID` | The UUID of the shopping list you want to pull items from. If not specified, items from all shopping lists will be pulled                                                                                                                      |    No    | -         | `12345678-1234-1234-1234-12345678`                      | 2                   |
+| `MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS` | Time in seconds to wait for no further changes to the mealie shopping list before moving items to Bring. This is necessary to avoid moving items multiple times when several items are added within a short time to the mealie shopping list (e.g. when clicking "Add to List" on a recipe). Leave empty, if your aren't using [automatic triggering via a Mealie notifier of action 2](#automatic-triggering-via-a-mealie-notifier-replaces-action-1) |    No    | `0` (disabled) | `2`                      | 2                   |
 | `LOG_LEVEL`                 | The loglevel the application logs at                                                                                                                                                                                                           |    No    | `INFO`    | `DEBUG`                                                 | 1, 2                |
 | `HTTP_HOST`                 | The address the application tries to attach to, leave this empty to listen on all interfaces, leave this empty if you are using Docker                                                                                                         |    No    | `0.0.0.0` | `192.168.1.5`                                           | 1, 2                |
 | `HTTP_PORT`                 | The port the application listens on, change this if needed if you run the application locally, leave this empty if you are using Docker                                                                                                        |    No    | `8742`    | `1234`                                                  | 1, 2                |
@@ -132,7 +133,7 @@ After deploying the container, you need to set up the actions you want to use.
 #### Action 2: Moving ingredients from a shopping list to Bring (optional)
 
 If you don't want to use this action, you can skip this entirely.
-If you want to use this action, you need to:
+If you want to use this action, you first need to:
 
 1. Generate an API key in Mealie:
    - Go to your profile in Mealie
@@ -143,10 +144,42 @@ If you want to use this action, you need to:
    - `MEALIE_BASE_URL`: The base URL of your Mealie instance
    - `MEALIE_API_KEY`: The API key you just generated
    - `MEALIE_SHOPPING_LIST_UUID` (optional): If you want to pull items from a specific shopping list only. The items of all shopping lists will be pulled if this is empty.
+
+You can then choose to trigger this action either manually or automatically.
+
+##### Manual triggering
+
 3. Add a new action the same way as `Action 1` is added, but set the path to `/move-ingredients-from-shopping-list` (
    e.g. `http://<ip-of-server>:8742/move-ingredients-from-shopping-list` or `https://mealie-bring-api.yourlocaldomain.com/move-ingredients-from-shopping-list` if you are using a reverse
    proxy)
 4. Try it out 🎉
+
+##### Automatic triggering via a Mealie notifier (replaces Action 1)
+
+Instead of manually triggering this action (or setting up `Action 1` at all), you can let Mealie call this webserver
+automatically every time your Mealie shopping list changes, e.g. an item is added or removed. With this in place you
+simply add ingredients to your Mealie shopping list the normal way (manually, or via Mealie's built-in `Add to List`
+button on a recipe) and they get forwarded to Bring on their own. This makes `Action 1` obsolete, since Mealie's own
+"add recipe to shopping list" feature now takes over that job.
+
+1. In the Mealie web UI, go to your household settings → `Notifiers` (`/household/notifiers`).
+2. Create a new notifier.
+3. Set the Apprise URL to `json://<ip-of-server>:8742/move-ingredients-from-shopping-list` (adjust host/port/path to
+   your setup, same as the URL used above for manual triggering, just with the `json://` scheme instead of
+   `http(s)://`).
+4. Save it. From now on, every change to your Mealie shopping list (adding an item manually, or bulk-adding all
+   ingredients of a recipe via `Add to List`) will trigger the move to Bring automatically.
+5. Since Mealie sends one notification per changed item, bulk-adding ingredients from a recipe fires several
+   notifications in quick succession. To avoid moving (and thus duplicating) items multiple times in that case, set
+   `MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS` (e.g. to `2`) so that this webserver waits for the shopping list to settle
+   down before moving the items to Bring once.
+
+> [!WARNING]
+> With this notifier in place, everything added to your Mealie shopping list gets swept away to Bring
+> automatically (within `MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS` seconds), regardless of who or what added it. This
+> means you can **no longer use Mealie's shopping list as an actual shopping list** — it only ever acts as a
+> momentary staging area on its way to Bring. Only set this up if you exclusively do your shopping in Bring and don't
+> care about Mealie's shopping list otherwise.
 
 ### Usage
 
