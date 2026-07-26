@@ -3,6 +3,7 @@ import copy
 import logging
 import signal
 import sys
+import threading
 from types import FrameType
 from typing import Union
 
@@ -19,11 +20,17 @@ class MealieBringAPI:
         self.host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")  # nosec: B104
         self.port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
         self.basepath = EnvironmentVariableGetter.get("HTTP_BASE_PATH", "")
+        self.move_ingredients_debounce_seconds = float(
+            EnvironmentVariableGetter.get("MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS", 0)
+        )
 
         self.logger = self._create_logger()
         self.loop = self._create_event_loop()
+        self.loop_lock = threading.Lock()
         self.bring_handler = self._create_bring_handler(self.loop)
         self.mealie_handler = MealieHandler()
+        self.move_debounce_lock = threading.Lock()
+        self.move_debounce_timer: threading.Timer | None = None
         self.app = self._create_app()
 
         signal.signal(signal.SIGTERM, self._handle_stop_signal)
@@ -63,11 +70,7 @@ class MealieBringAPI:
                 self.logger.log.warning("Mealie is not setup! See the logs above for more information.")
                 return "", 400
 
-            self.logger.log.info("Moving ingredients from shopping list to Bring")
-
-            items_on_shopping_list = self.mealie_handler.get_items_on_shopping_list()
-            self._add_ingredients_to_bring([Ingredient.from_raw_data(item) for item in items_on_shopping_list])
-            self.mealie_handler.delete_items_from_shopping_list(items_on_shopping_list)
+            self._schedule_move_ingredients_from_shopping_list()
 
             return "OK"
 
@@ -134,15 +137,47 @@ class MealieBringAPI:
 
         return flatten(recipe_ingredients, 1.0)
 
+    def _schedule_move_ingredients_from_shopping_list(self) -> None:
+        if self.move_ingredients_debounce_seconds <= 0:
+            self._move_ingredients_from_shopping_list_to_bring()
+            return
+
+        with self.move_debounce_lock:
+            if self.move_debounce_timer is not None:
+                self.move_debounce_timer.cancel()
+
+            self.logger.log.info(
+                f"Shopping list changed, moving items to Bring in {self.move_ingredients_debounce_seconds}s "
+                "if no further changes occur"
+            )
+            self.move_debounce_timer = threading.Timer(
+                self.move_ingredients_debounce_seconds, self._run_debounced_move_ingredients_from_shopping_list
+            )
+            self.move_debounce_timer.daemon = True
+            self.move_debounce_timer.start()
+
+    def _run_debounced_move_ingredients_from_shopping_list(self) -> None:
+        with self.move_debounce_lock:
+            self.move_debounce_timer = None
+
+        self._move_ingredients_from_shopping_list_to_bring()
+
+    def _move_ingredients_from_shopping_list_to_bring(self) -> None:
+        self.logger.log.info("Moving ingredients from shopping list to Bring")
+
+        items_on_shopping_list = self.mealie_handler.get_items_on_shopping_list()
+        self._add_ingredients_to_bring([Ingredient.from_raw_data(item) for item in items_on_shopping_list])
+        self.mealie_handler.delete_items_from_shopping_list(items_on_shopping_list)
+
     def _add_ingredients_to_bring(self, ingredients_to_add: list[Ingredient]) -> None:
         if not ingredients_to_add:
             self.logger.log.warning("There are no ingredients to add")
             return
 
         self.logger.log.info(f"Adding ingredients to Bring: {ingredients_to_add}")
-        self.loop.run_until_complete(self.bring_handler.add_items(ingredients_to_add))
-
-        self.loop.run_until_complete(self.bring_handler.notify_users_about_changes_in_list())
+        with self.loop_lock:
+            self.loop.run_until_complete(self.bring_handler.add_items(ingredients_to_add))
+            self.loop.run_until_complete(self.bring_handler.notify_users_about_changes_in_list())
 
     def run(self) -> None:
         self.logger.log.info(f"Listening on {self.host}:{self.port}{self.basepath}")
@@ -150,6 +185,14 @@ class MealieBringAPI:
 
     def _handle_stop_signal(self, signal_number: int, _frame: FrameType) -> None:
         self.logger.log.info(f"Received {signal.Signals(signal_number).name}. Exiting now...")
+
+        with self.move_debounce_lock:
+            pending_timer = self.move_debounce_timer
+            self.move_debounce_timer = None
+        if pending_timer is not None:
+            pending_timer.cancel()
+            self.logger.log.info("Flushing pending shopping list move before shutdown")
+            self._move_ingredients_from_shopping_list_to_bring()
 
         self.loop.run_until_complete(self.bring_handler.logout())
         self.loop.stop()
