@@ -194,7 +194,8 @@ class MealieBringAPI:
             self.logger.log.info("Flushing pending shopping list move before shutdown")
             self._move_ingredients_from_shopping_list_to_bring()
 
-        self.loop.run_until_complete(self.bring_handler.logout())
+        with self.loop_lock:
+            self.loop.run_until_complete(self.bring_handler.logout())
         self.loop.stop()
 
         sys.exit(0)
