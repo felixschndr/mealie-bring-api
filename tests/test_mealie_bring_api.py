@@ -150,19 +150,7 @@ def test_move_ingredients_from_shopping_list_to_bring(mealie_app):
     mealie_app.mealie_handler.delete_items_from_shopping_list.assert_called_once_with(items_on_shopping_list)
 
 
-def test_schedule_move_ingredients_runs_immediately_when_debounce_disabled(mealie_app):
-    mealie_app.move_ingredients_debounce_seconds = 0
-
-    with patch.object(mealie_app, "_move_ingredients_from_shopping_list_to_bring") as mock_move:
-        mealie_app._schedule_move_ingredients_from_shopping_list()
-
-    mock_move.assert_called_once()
-    assert mealie_app.move_debounce_timer is None
-
-
-def test_schedule_move_ingredients_starts_timer_when_debounce_enabled(mealie_app):
-    mealie_app.move_ingredients_debounce_seconds = 2
-
+def test_schedule_move_ingredients_starts_timer(mealie_app):
     with patch("source.mealie_bring_api.threading.Timer") as mock_timer_cls:
         mock_timer_instance = MagicMock()
         mock_timer_cls.return_value = mock_timer_instance
@@ -175,7 +163,6 @@ def test_schedule_move_ingredients_starts_timer_when_debounce_enabled(mealie_app
 
 
 def test_schedule_move_ingredients_cancels_previous_pending_timer(mealie_app):
-    mealie_app.move_ingredients_debounce_seconds = 2
     previous_timer = MagicMock()
     mealie_app.move_debounce_timer = previous_timer
 

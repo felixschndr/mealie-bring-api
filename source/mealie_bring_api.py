@@ -14,15 +14,14 @@ from source.ingredient import Ingredient, IngredientWithAmountsDisabled
 from source.logger_mixin import LoggerMixin
 from source.mealie_handler import MealieHandler
 
+MOVE_INGREDIENTS_DEBOUNCE_SECONDS = 2
+
 
 class MealieBringAPI:
     def __init__(self):
         self.host = EnvironmentVariableGetter.get("HTTP_HOST", "0.0.0.0")  # nosec: B104
         self.port = int(EnvironmentVariableGetter.get("HTTP_PORT", 8742))
         self.basepath = EnvironmentVariableGetter.get("HTTP_BASE_PATH", "")
-        self.move_ingredients_debounce_seconds = float(
-            EnvironmentVariableGetter.get("MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS", 0)
-        )
 
         self.logger = self._create_logger()
         self.loop = self._create_event_loop()
@@ -138,20 +137,16 @@ class MealieBringAPI:
         return flatten(recipe_ingredients, 1.0)
 
     def _schedule_move_ingredients_from_shopping_list(self) -> None:
-        if self.move_ingredients_debounce_seconds <= 0:
-            self._move_ingredients_from_shopping_list_to_bring()
-            return
-
         with self.move_debounce_lock:
             if self.move_debounce_timer is not None:
                 self.move_debounce_timer.cancel()
 
             self.logger.log.info(
-                f"Shopping list changed, moving items to Bring in {self.move_ingredients_debounce_seconds}s "
+                f"Shopping list changed, moving items to Bring in {MOVE_INGREDIENTS_DEBOUNCE_SECONDS}s "
                 "if no further changes occur"
             )
             self.move_debounce_timer = threading.Timer(
-                self.move_ingredients_debounce_seconds, self._run_debounced_move_ingredients_from_shopping_list
+                MOVE_INGREDIENTS_DEBOUNCE_SECONDS, self._run_debounced_move_ingredients_from_shopping_list
             )
             self.move_debounce_timer.daemon = True
             self.move_debounce_timer.start()
