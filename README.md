@@ -4,7 +4,12 @@ The self-hosted recipe manager [Mealie](https://github.com/mealie-recipes/mealie
 
 This project provides a simple webserver which offers two main actions:
 1. Adding ingredients from a Mealie recipe to a specified Bring shopping list
-2. Moving all ingredients from a Mealie shopping list (not a specific recipe) to a specified Bring shopping list (optional)
+2. Moving all ingredients from a Mealie shopping list (not a specific recipe) to a specified Bring shopping list
+
+> [!NOTE]
+> If you are not using the built-in shopping list feature you _can_ Action 2 in combination with the webhook notifier instead of the recipe action for adding all the ingredients to Bring.
+> The benefit of choosing automatic Action 2 is that the user can add the ingredients of a recipe by clicking on the Mealie native button `Add to list`. This is (a) easier to see and understand for non-techie users, (b) requires one less click and (c) works in alternative frontends (such as native iOS apps) that don't support recipe actions.
+
 
 If you like the project, please consider giving it a star on GitHub, thank you very much! ⭐
 
@@ -144,41 +149,45 @@ If you want to use this action, you first need to:
    - `MEALIE_API_KEY`: The API key you just generated
    - `MEALIE_SHOPPING_LIST_UUID` (optional): If you want to pull items from a specific shopping list only. The items of all shopping lists will be pulled if this is empty.
 
-You can then choose to trigger this action either manually or automatically.
+You then have to decide **how** this action gets triggered. There are two options, and they are mutually exclusive.
+Which one fits you depends entirely on whether you still want to use Mealie's own shopping list for anything:
+
+- **[Manual triggering](#manual-triggering)** leaves Mealie's shopping list fully usable as a real shopping list. You
+  add and remove items there as you like, and only when *you* run the recipe action are they moved over to Bring.
+- **[Automatic triggering](#automatic-triggering-via-a-mealie-notifier)** forwards everything on Mealie's shopping list
+  to Bring on its own with no manual interaction once an item is added to the shopping list. This is more convenient, but as a consequence Mealie's shopping list can no longer be used as an actual shopping list. Only pick this if you do your shopping exclusively in Bring.
 
 ##### Manual triggering
 
-3. Add a new action the same way as `Action 1` is added, but set the path to `/move-ingredients-from-shopping-list` (
+1. Add a new action the same way as `Action 1` is added, but set the path to `/move-ingredients-from-shopping-list` (
    e.g. `http://<ip-of-server>:8742/move-ingredients-from-shopping-list` or `https://mealie-bring-api.yourlocaldomain.com/move-ingredients-from-shopping-list` if you are using a reverse
    proxy)
-4. Try it out 🎉
+2. Try it out 🎉
 
-##### Automatic triggering via a Mealie notifier (replaces Action 1)
+##### Automatic triggering via a Mealie notifier
 
-Instead of manually triggering this action (or setting up `Action 1` at all), you can let Mealie call this webserver
-automatically every time your Mealie shopping list changes, e.g. an item is added or removed. With this in place you
-simply add ingredients to your Mealie shopping list the normal way (manually, or via Mealie's built-in `Add to List`
-button on a recipe) and they get forwarded to Bring on their own. This makes `Action 1` obsolete, since Mealie's own
-"add recipe to shopping list" feature now takes over that job.
+You add ingredients to your Mealie shopping list the normal way (manually, or via Mealie's built-in `Add to List` button
+on a recipe) and they get forwarded to Bring on their own. On top of the convenience this has two more advantages over
+`Action 1`:
+
+- You no longer need `Action 1` at all: Mealie's own `Add to List` button takes over the job of forwarding a recipe's
+  ingredients to Bring.
+- Most iOS apps can trigger Mealie's `Add to List` button but *cannot* execute recipe actions, so for those apps this
+  is the only way to get ingredients into Bring.
+
+To set it up:
 
 1. In the Mealie web UI, go to your household settings → `Notifiers` (`/household/notifiers`).
 2. Create a new notifier.
-3. Set the Apprise URL to `json://<ip-of-server>:8742/move-ingredients-from-shopping-list` (adjust host/port/path to
+3. Give it any title. (e.g. `Bring` or `Add ingredients to Bring`). This will _not_ be visible for the users.
+4. Set the Apprise URL to `json://<ip-of-server>:8742/move-ingredients-from-shopping-list` (adjust host/port/path to
    your setup, same as the URL used above for manual triggering, just with the `json://` scheme instead of
    `http(s)://`).
-4. Save it. From now on, every change to your Mealie shopping list (adding an item manually, or bulk-adding all
-   ingredients of a recipe via `Add to List`) will trigger the move to Bring automatically.
-5. Since Mealie sends one notification per changed item, bulk-adding ingredients from a recipe fires several
-   notifications in quick succession. To avoid moving (and thus duplicating) items multiple times in that case, set
-   `MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS` (e.g. to `2`) so that this webserver waits for the shopping list to settle
-   down before moving the items to Bring once.
-
-> [!WARNING]
-> With this notifier in place, everything added to your Mealie shopping list gets swept away to Bring
-> automatically (within `MEALIE_SHOPPING_LIST_DEBOUNCE_SECONDS` seconds), regardless of who or what added it. This
-> means you can **no longer use Mealie's shopping list as an actual shopping list** — it only ever acts as a
-> momentary staging area on its way to Bring. Only set this up if you exclusively do your shopping in Bring and don't
-> care about Mealie's shopping list otherwise.
+   ![adding notifier](./assets/images/adding_notifier.png)
+5. Save it. From now on, every change to your Mealie shopping list (adding an item manually, or bulk-adding all
+   ingredients of a recipe via `Add to List`) will trigger the move to Bring automatically. Since Mealie sends one
+   notification per changed item, this webserver waits a couple of seconds for the shopping list to settle before moving
+   everything over in one go, so bulk-adding a whole recipe doesn't create duplicates in Bring.
 
 ### Usage
 
@@ -207,12 +216,13 @@ button on a recipe) and they get forwarded to Bring on their own. This makes `Ac
 1. Add the items of your recipes to your Mealie shopping list or add items manually.
 
    ![adding recipe items](./assets/images/add_recipe_ingredients_to_list.png)
-2. After you add all the items, you want to move to Bring open _any_ recipe
-3. Click on `Recipe Actions`
-4. Choose your new action (e.g. `Move items to Bring`)
+2. If you choose to run the action automatically, skip to 6.
+3. After you add all the items, you want to move to Bring, open _any_ recipe
+4. Click on `Recipe Actions`
+5. Choose your new action (e.g. `Move items to Bring`)
 
    ![execute add items to bring](./assets/images/execute_move_items_to_bring.png)
-5. That's it!
+6. That's it!
    - The items will be removed from your Mealie shopping list and added to your Bring shopping list.
    - You should see some output in the logfile
    ```text
