@@ -55,7 +55,6 @@ jobs:
         uses: actions/checkout@main
 
       - name: Login to GitHub Container Registry
-        # Fork PRs don't have access to secrets; only log in when we actually push
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v4.5.0
         with:
