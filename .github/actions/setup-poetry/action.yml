@@ -1,0 +1,20 @@
+name: Setup Python and Poetry
+description: Install Python, Poetry and project dependencies
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.14'
+        cache: 'pip'
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Install dependencies
+      shell: bash
+      run: poetry install --no-interaction

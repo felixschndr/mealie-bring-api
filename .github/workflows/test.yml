@@ -30,61 +30,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
-          cache: 'pip'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Install dependencies
-        run: poetry install --no-interaction
+      - name: Set up Python and Poetry
+        uses: ./.github/actions/setup-poetry
 
       - name: Run tests
         run: poetry run pytest
 
-      # Trusted runs (push / same-repo PR) have direct secret access.
-      # Fork PRs run this via the gated `integration-test-fork` job below.
-      - name: Run integration tests
-        if: github.event.pull_request.head.repo.fork != true
-        env:
-          BRING_USERNAME: ${{ secrets.BRING_TESTING_USERNAME}}
-          BRING_PASSWORD: ${{ secrets.BRING_TESTING_PASSWORD}}
-          BRING_LIST_NAME: Zuhause
-        run: poetry run pytest tests/test_integration.py
-
-  # Fork PRs can't see repo secrets. This job uses the `integration` environment,
-  # which is protected by a required reviewer: the run pauses until a maintainer
-  # inspects the diff and approves, only then are the environment's Bring creds
-  # exposed to the (now vetted) fork code.
-  integration-test-fork:
-    if: github.event.pull_request.head.repo.fork == true
+  integration-test:
     needs: test
     runs-on: ubuntu-latest
-    environment: integration
+    environment: ${{ github.event.pull_request.head.repo.fork == true && 'integration' || '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
-          cache: 'pip'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Install dependencies
-        run: poetry install --no-interaction
+      - name: Set up Python and Poetry
+        uses: ./.github/actions/setup-poetry
 
       - name: Run integration tests
         env:
@@ -131,7 +92,7 @@ jobs:
           done
 
           docker stop "${CONTAINER_ID}" >/dev/null
-          
+
           echo "---- Container logs ----"
           echo "${LOGS}"
 
