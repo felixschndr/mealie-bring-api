@@ -2,8 +2,8 @@
 
 Thank you for contributing to Mealie-Bring-API (the "Project"), owned by Felix
 Schneider (the "Owner"). To keep the Project licensable — including under the
-Elastic License 2.0 and under separate commercial terms offered solely by the
-Owner — every contributor must agree to this Contributor License Agreement
+GNU Affero General Public License v3.0 and under separate commercial terms
+offered solely by the Owner — every contributor must agree to this Contributor License Agreement
 ("Agreement"). By submitting a contribution (a pull request, patch, or any code,
 documentation, or other material, a "Contribution") to the Project, you agree to
 the terms below.
@@ -15,8 +15,9 @@ irrevocable license to reproduce, prepare derivative works of, publicly display,
 publicly perform, sublicense, and distribute your Contribution and such
 derivative works. This license includes the right for the Owner to license the
 Contribution — and the Project as a whole — under any license terms, including
-the Elastic License 2.0, other open-source or source-available licenses, and
-proprietary or commercial licenses, in each case at the Owner's sole discretion.
+the GNU Affero General Public License v3.0, other open-source or
+source-available licenses, and proprietary or commercial licenses, in each case
+at the Owner's sole discretion.
 
 ## 2. Patent license
 
