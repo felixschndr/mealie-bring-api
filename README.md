@@ -119,20 +119,24 @@ After deploying the container, you need to set up the actions you want to use.
 
 #### Action 1: Adding ingredients from a recipe to Bring
 
-1. Head over to `http(s)://<your-mealie-instance>/group/data/recipe-actions` (e.g.,
+1. Starting with [v3.26.0](https://github.com/mealie-recipes/mealie/releases/tag/v3.26.0) Mealie requires the env variable `HTTP_ALLOW_LIST` to be set; set it to the IP address of the container of the Mealie Bring API
+   - If you are using docker compose and both apps are running in the same compose stack you can set the variable to `172.16.0.0/12`. If you know what you are doing you can also assign a specific ip address to the Mealie Bring API container and then set this as the `HTTP_ALLOW_LIST` (see [docker docs](https://docs.docker.com/compose/how-tos/networking/)).
+   - If your Mealie Bring API is accessible via a reverse proxy you have to set this to the IP address of the reverse proxy.
+2. Restart Mealie.
+3. Head over to `http(s)://<your-mealie-instance>/group/data/recipe-actions` (e.g.,
 `http://localhost:1234/group/data/recipe-actions`) while being logged in as an administrator.
 
    ![actions before adding](./assets/images/actions_before_adding.png)
-2. Click on `Create` to create a new `action`.
-3. Give it any title (e.g. `Bring` or `Add ingredients to Bring`). This will be visible for the users.
+4. Click on `Create` to create a new `action`.
+5. Give it any title (e.g. `Bring` or `Add ingredients to Bring`). This will be visible for the users.
 
    ![adding action](./assets/images/adding_action.png)
-4. For the `URL` input the address where this project is running on followed by a `/` (e.g. `http://<ip-of-server>:8742/` or `https://mealie-bring-api.yourlocaldomain.com/` if you are using a reverse proxy)
-5. Change the `Type` to `POST`
-6. Save
+6. For the `URL` input the address where this project is running on followed by a `/` (e.g. `http://<ip-of-server>:8742/` or `https://mealie-bring-api.yourlocaldomain.com/` if you are using a reverse proxy)
+7. Change the `Type` to `POST`
+8. Save
 
    ![actions after adding](./assets/images/actions_after_adding.png)
-7. Try it out 🎉
+9. Try it out 🎉
 
 #### Action 2: Moving ingredients from a shopping list to Bring (optional)
 
