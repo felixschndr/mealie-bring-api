@@ -1,23 +1,22 @@
 services:
   mealie:
     image: ghcr.io/mealie-recipes/mealie
-    container_name: mealie_app
-    ports:
-      - "12000:9000"
     [...]
     depends_on:
       - database
+
   database:
-    container_name: mealie_database
-    image: postgres:15
+    image: postgres
     [...]
+
   bring-api:
     image: ghcr.io/felixschndr/mealie-bring-api:latest
-    container_name: mealie_bring_api
     ports:
       - "12001:8742" # external:internal
     environment:
       # Take a look at the README for an explanation of the environment variables
+      # If you are using the array style instead of the map style to define your env variable be sure
+      # to NOT quote the values, see https://docs.docker.com/reference/compose-file/services/#environment
       BRING_USERNAME: "myuser@myemailprovider.com"
       BRING_PASSWORD: "mysupersecretpassword"
       BRING_LIST_NAME: "My list has some spaces in it"
@@ -33,6 +32,5 @@ services:
       HTTP_BASE_PATH: ""
     cap_drop:
       - ALL
-
     depends_on:
       - mealie
